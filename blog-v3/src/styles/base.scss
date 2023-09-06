@@ -288,11 +288,11 @@ div:focus {
   background: rgba(255, 255, 255, 0.3);
 
   code::scrollbar-thumb {
-    background-color: #efbcda;
+    background-color: #efbcda !important;
   }
 
   code::-webkit-scrollbar-thumb {
-    background-color: #efbcda;
+    background-color: #efbcda !important;
   }
 }
 
