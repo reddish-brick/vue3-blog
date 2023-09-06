@@ -1,0 +1,4 @@
+node_modules
+src/upload/local
+secret
+.env
