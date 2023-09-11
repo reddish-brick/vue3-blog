@@ -286,14 +286,7 @@ div:focus {
 }
 .md-preview-v3 {
   background: rgba(255, 255, 255, 0.3);
-
-  code::scrollbar-thumb {
-    background-color: #efbcda !important;
-  }
-
-  code::-webkit-scrollbar-thumb {
-    background-color: #efbcda !important;
-  }
+  // 滚动条背景色不好修改
 }
 
 // 滚动条宽度
