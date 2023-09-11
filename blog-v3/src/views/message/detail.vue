@@ -4,10 +4,16 @@
 * @Description: 留言详情页
 -->
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, h } from "vue";
+import { storeToRefs } from "pinia";
+
 import { returnTime, _getLocalItem, _removeLocalItem, containHTML } from "@/utils/tool";
 import { likeMessage, cancelLikeMessage } from "@/api/message";
 import { addLike, cancelLike } from "@/api/like";
+import { user } from "@/store/index";
+
+const userStore = user();
+const { getUserInfo } = storeToRefs(userStore);
 
 const message = reactive({
   id: 0,
@@ -32,8 +38,8 @@ const like = async (item, index) => {
     if (res.code == 0) {
       // 记录留言取消点赞
       await cancelLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
-      messageList.value[index].like_times--;
-      messageList.value[index].is_like = false;
+      item.like_times--;
+      item.is_like = false;
       ElNotification({
         offset: 60,
         title: "提示",
@@ -47,8 +53,8 @@ const like = async (item, index) => {
     if (res.code == 0) {
       // 记录留言点赞
       await addLike({ for_id: item.id, type: 3, user_id: getUserInfo.value.id });
-      messageList.value[index].like_times++;
-      messageList.value[index].is_like = true;
+      item.like_times++;
+      item.is_like = true;
       ElNotification({
         offset: 60,
         title: "提示",

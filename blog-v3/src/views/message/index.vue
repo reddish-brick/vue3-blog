@@ -34,6 +34,7 @@ const searchTag = ref("");
 const changeTab = (key, label) => {
   activeTab.value = key;
   param.tag = label;
+  searchTag.value = "";
   if (label == "全部") {
     param.tag = "";
   }
@@ -182,6 +183,7 @@ const mouseDown = () => {
 const mouseLeave = () => {
   showSearch.value = false;
 };
+// TODO 改成搜索内容
 const changeSearch = (val) => {
   param.tag = val;
   pageGetMessageList();
@@ -263,7 +265,7 @@ onBeforeUnmount(() => {
                 <div class="bottom">
                   <div class="left flex items-center">
                     <div class="time">{{ returnTime(message.createdAt) }}前</div>
-                    <div class="comment cursor-pointer !mr-[10px]" @click="comment(message)">
+                    <div class="message-comment cursor-pointer !mr-[10px]" @click="comment(message)">
                       <span>评论</span>
                       <span class="!ml-[5px]">{{ message.comment_total }}</span>
                     </div>
@@ -391,7 +393,7 @@ onBeforeUnmount(() => {
       margin-right: 10px;
     }
 
-    .comment {
+    .message-comment {
       font-size: 12px;
       color: #fff;
       letter-spacing: 1px;
