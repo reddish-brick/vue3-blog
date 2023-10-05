@@ -82,7 +82,7 @@ const getComment = async (type) => {
   if (res && res.code == 0) {
     const { list, total } = res.result;
     commentList.value = list;
-    commentTotal.value = total - 1;
+    commentTotal.value = total - 0;
   } else {
     ElNotification({
       offset: 60,
