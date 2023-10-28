@@ -1,3 +1,5 @@
+import { reqMusicDetail, reqMusicLyricById } from "@/api/music";
+
 export const MODELLIST = [
   "RANDOM", // 随机
   "LISTLOOP", // 列表循环
@@ -34,38 +36,42 @@ const returnRandomNoRepeat = (index, len) => {
  * @description: 返回下一首播放的歌曲
  */
 export function getNextMusic(len, index, playType, isPlayNext) {
+  let newIndex = 0;
   switch (playType) {
     // 随机
     case "RANDOM":
-      index = returnRandomNoRepeat(index, len);
+      newIndex = returnRandomNoRepeat(index, len);
+      if (newIndex == index) {
+        newIndex = returnRandomNoRepeat(index, len);
+      }
       break;
     // 列表循环
     case "LISTLOOP":
       if (isPlayNext) {
         if (index == len - 1) {
-          index = 0;
+          newIndex = 0;
         } else if (index != -1) {
-          index = index + 1;
+          newIndex = index + 1;
         } else {
-          index = 0;
+          newIndex = 0;
         }
       } else {
         if (index == 0) {
-          index = len - 1;
+          newIndex = len - 1;
         } else if (index != -1) {
-          index = index - 1;
+          newIndex = index - 1;
         } else {
-          index = 0;
+          newIndex = 0;
         }
       }
       break;
     // 单曲循环
     case "SINGLECYCLE":
-      index = index;
+      newIndex = index;
       break;
   }
 
-  return index;
+  return newIndex;
 }
 
 /**
@@ -97,7 +103,6 @@ export function calcMusicTime(time) {
 
   minutes = Math.floor(time / 60);
   second = Math.floor(time % 60);
-
   return `${addZero(minutes)}:${addZero(second)}`;
 }
 
@@ -108,5 +113,54 @@ export function calcMusicTime(time) {
  * @description: 计算歌曲播放百分比
  */
 export function calcMusicSchedule(current, duration) {
-  return Math.round((current / duration) * 1000) / 10;
+  return Math.round((current / duration) * 10000) / 100;
 }
+
+/*
+ * @author: Zhang Yuming
+ * @date: 2023-10-23 13:33:46
+ * @params: progress 进度 duration 播放时长
+ * @description: 通过进度计算播放的时长
+ */
+export function calcMusicCurrentTime(progress, duration) {
+  return Math.round(progress * duration) / 100;
+}
+
+/**
+ * 根据歌曲id获取歌曲详情
+ * @param {*} id
+ */
+export const getMusicDetail = async (id) => {
+  const res = await reqMusicDetail({
+    id,
+    level: "exhigh",
+  });
+  if (res.code == 200) {
+    // 设置音乐详情 播放器通过监听音乐的id 进行音乐播放
+    return {
+      detail: res.data[0],
+    };
+  }
+};
+
+export const getLyric = async (id) => {
+  const res = await reqMusicLyricById(id);
+  if (res.code == 200) {
+    let lyricArr = res.lrc.lyric.split("\n");
+    const notNullLyricArr = [];
+    const timeList = [];
+    lyricArr.forEach((v) => {
+      let arr = v.split("]");
+      let timeArr = arr[0].replace("[", "").split(":");
+      if (arr[1] && arr[0]) {
+        // 不为空才收集歌词
+        timeList.push((timeArr[0] - 0) * 1000 * 60 + (timeArr[1] - 0) * 1000);
+        notNullLyricArr.push(arr[1]);
+      }
+    });
+    return {
+      lyricList: notNullLyricArr, // 歌词列表
+      lyricTimeList: timeList, // 歌词时间列表
+    };
+  }
+};

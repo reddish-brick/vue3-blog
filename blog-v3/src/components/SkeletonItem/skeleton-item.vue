@@ -1,8 +1,11 @@
 <template>
-  <el-skeleton-item v-bind="$attrs" :style="`width: ${width}; height: ${height}; margin-left:${left};margin-top:${top};`" />
+  <el-skeleton-item
+    v-bind="$attrs"
+    :style="`width: ${width}; height: ${height}; margin-left:${left};margin-top:${top};`"
+  />
 </template>
 <script setup>
-const props = defineProps({
+defineProps({
   // 宽度
   width: {
     type: [Number, String],

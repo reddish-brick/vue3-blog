@@ -89,11 +89,26 @@ watch(
 </script>
 
 <template>
-  <el-upload ref="uploadAvatarRef" v-model:file-list="uploadFileList" :class="[showUpload && !preview ? '' : 'hide-upload']" action="#" list-type="picture-card" :auto-upload="false" :multiple="multiple" :limit="limit" :on-change="uploadChange">
+  <el-upload
+    ref="uploadAvatarRef"
+    v-model:file-list="uploadFileList"
+    :class="[showUpload && !preview ? '' : 'hide-upload']"
+    action="#"
+    list-type="picture-card"
+    :auto-upload="false"
+    :multiple="multiple"
+    :limit="limit"
+    :on-change="uploadChange"
+  >
     <el-icon><Plus /></el-icon>
     <template #file="{ file }">
       <div>
-        <el-image :style="{ width: width + 'px', height: height + 'px' }" fit="cover" :src="file.url" lazy />
+        <el-image
+          :style="{ width: width + 'px', height: height + 'px' }"
+          fit="cover"
+          :src="file.url"
+          lazy
+        />
         <span class="el-upload-list__item-actions">
           <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
             <el-icon><zoom-in /></el-icon>
@@ -105,7 +120,12 @@ watch(
       </div>
     </template>
   </el-upload>
-  <el-image-viewer v-if="dialogVisible" :url-list="uploadFileList.map((v) => v.url)" :initial-index="previewIndex" @close="closeImgViewer" />
+  <el-image-viewer
+    v-if="dialogVisible"
+    :url-list="uploadFileList.map((v) => v.url)"
+    :initial-index="previewIndex"
+    @close="closeImgViewer"
+  />
 </template>
 
 <style lang="scss" scoped>

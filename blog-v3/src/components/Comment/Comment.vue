@@ -1,12 +1,15 @@
 <script setup>
 import { ref, onMounted, h, watch } from "vue";
 import { user } from "@/store/index";
-import ParentItem from "./item/ParentItem.vue";
 import router from "@/router";
-import { ElNotification } from "element-plus";
+
 import { addComment, frontGetCommentTotal } from "@/api/comment";
-import CommentInput from "./item/CommentInput.vue";
 import { getCurrentType } from "./tool";
+
+import ParentItem from "./item/ParentItem.vue";
+import CommentInput from "./item/CommentInput.vue";
+import { ElNotification } from "element-plus";
+import { numberFormate } from "@/utils/tool";
 
 const userStore = user();
 const props = defineProps({
@@ -154,29 +157,58 @@ onMounted(() => {
   <div class="comment">
     <div class="comment-header">
       <div class="flex justify-start items-center">
-        <span class="total-value">评论 {{ total }}</span>
+        <span v-if="total" class="total-value"> 评论 {{ numberFormate(total) }} </span>
         <div v-if="total && isExpand" class="flex items-center">
-          <span :class="['comment-tab', activeOrder == 'hot' ? 'active-order' : '']" @click="changeOrder('hot')">最热</span>
+          <span
+            :class="['comment-tab', activeOrder == 'hot' ? 'active-order' : '']"
+            @click="changeOrder('hot')"
+            >最热</span
+          >
           <span class="comment-tab">|</span>
-          <span :class="['comment-tab', activeOrder == 'new' ? 'active-order' : '']" @click="changeOrder('new')">最新</span>
+          <span
+            :class="['comment-tab', activeOrder == 'new' ? 'active-order' : '']"
+            @click="changeOrder('new')"
+            >最新</span
+          >
         </div>
       </div>
-      <span v-if="total" class="more" @click="toggleExpand"> {{ isExpand ? "收起" : "查看更多" }}</span>
+      <span v-if="total" class="more" @click="toggleExpand">
+        {{ isExpand ? "收起" : "查看更多" }}</span
+      >
       <span v-else class="more" @click="toggleExpand">
-        {{ isExpand ? "取消发布" : "来说点什么吧~" }}
+        {{ isExpand ? "取消发布" : "求评论呀~" }}
       </span>
     </div>
-    <div v-if="isExpand" id="commentInput" class="!mt-[1rem] w-[100%] flex justify-start items-start">
+    <div
+      v-if="isExpand"
+      id="commentInput"
+      class="!mt-[1rem] w-[100%] flex justify-start items-start"
+    >
       <div class="avatar-box">
-        <el-avatar class="avatar" :src="userStore.getUserInfo.avatar" @click="toLogin">{{ userStore.getUserInfo.nick_name || "登录" }}</el-avatar>
+        <el-avatar class="avatar" :src="userStore.getUserInfo.avatar" @click="toLogin">{{
+          userStore.getUserInfo.nick_name || "登录"
+        }}</el-avatar>
       </div>
       <div class="!w-[100%] !ml-[10px]">
-        <CommentInput ref="commentInputRef" v-model:inputText="commentText" :show-publish-button="false" :parent="true" @publish="publish" />
+        <CommentInput
+          ref="commentInputRef"
+          v-model:inputText="commentText"
+          :show-publish-button="false"
+          :parent="true"
+          @publish="publish"
+        />
       </div>
     </div>
     <!-- 评论组件 这里采用了父级评论和子级评论嵌套的方式 -->
     <div class="comment-list">
-      <ParentItem v-if="isExpand" ref="parentItemRef" :active="activeOrder" :type="type" :id="id" :author-id="authorId" />
+      <ParentItem
+        v-if="isExpand"
+        ref="parentItemRef"
+        :active="activeOrder"
+        :type="type"
+        :id="id"
+        :author-id="authorId"
+      />
     </div>
   </div>
 </template>

@@ -1,57 +1,92 @@
-/*
- * @author: Zhang Yuming
- * @date: 2023-07-10 15:00:55
- * @params: root 根元素 boxList 观察列表 observe 观察实例 key 观察的名称 rootMargin 偏移值(上 右 下做)
- * @description: 用于观测元素的出现和消失，增加动画
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+
+// 利用jsap来进行盒子的动画
+/**
+ *
+ * @param {*} list 盒子类名
+ * @param {*} x 位移
+ * @param {*} duration 持续时间 s
+ * @param {*} ease 动画过渡 详情见 https://gsap.com/docs/v3/Eases/
  */
+function gsapTransX(list, x, duration = 1, ease = "power1.inOut") {
+  gsap.registerPlugin(ScrollTrigger);
+  list.map((v) => {
+    gsap.fromTo(
+      v,
+      {
+        scrollTrigger: v,
+        x,
+      },
+      {
+        scrollTrigger: v,
+        x: 0,
+        duration,
+        ease,
+      }
+    );
+  });
+}
 
-const transform = (root, boxList = [], rootMargin = "") => {
-  const observe = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const isAbove = entry.boundingClientRect.y < entry.rootBounds.y;
-        if (entry.intersectionRatio > 0 && entry.intersectionRatio < 1) {
-          if (isAbove) {
-            entry.target.classList.add("above-enter");
-          } else {
-            entry.target.classList.add("bottom-enter");
-          }
-        } else {
-          new Promise((resolve) => {
-            resolve();
-          }).then(() => {
-            entry.target.classList.remove("above-enter");
-            entry.target.classList.remove("bottom-enter");
-          });
-        }
-      });
-    },
-    {
-      root: root || null,
-      rootMargin,
-    }
-  );
-
-  boxList.length &&
-    boxList.forEach((box) => {
-      observe && observe.observe(box);
-    });
-
-  return observe;
-};
-
-/*
- * @author: Zhang Yuming
- * @date: 2023-07-10 15:25:25
- * @params: root 根元素 boxList 元素列表
- * @description:
+/**
+ *
+ * @param {*} list 盒子类名
+ * @param {*} y 位移
+ * @param {*} duration 持续时间 s
+ * @param {*} ease 动画过渡 详情见 https://gsap.com/docs/v3/Eases/
  */
-const unObserveBox = (observe, boxList) => {
-  boxList.length &&
-    boxList.forEach((box) => {
-      observe && observe.unobserve(box);
-    });
-  observe = null;
-};
+function gsapTransY(list, y, duration = 1, ease = "power1.inOut") {
+  gsap.registerPlugin(ScrollTrigger);
+  list.map((v) => {
+    gsap.fromTo(
+      v,
+      {
+        scrollTrigger: v,
+        y,
+      },
+      {
+        scrollTrigger: v,
+        y: 0,
+        duration,
+        ease,
+      }
+    );
+  });
+}
 
-export { transform, unObserveBox };
+/**
+ *
+ * @param {*} list 盒子类名
+ * @param {*} from 从多小开始scale
+ * @param {*} duration 持续时间 s
+ * @param {*} ease 动画过渡 详情见 https://gsap.com/docs/v3/Eases/
+ */
+function gsapTransXScale(list, from = 0.5, duration = 0.8, ease = "power1.inOut") {
+  gsap.registerPlugin(ScrollTrigger);
+  list.map((v) => {
+    gsap.fromTo(
+      v,
+      {
+        scrollTrigger: v,
+        scale: from,
+        duration: 0,
+      },
+      {
+        scrollTrigger: v,
+        scale: 1,
+        duration,
+        ease,
+      }
+    );
+  });
+}
+
+// 字体动画
+function gsapTransFont(name) {
+  gsap.to(name, {
+    y: -10,
+    stagger: 0.3,
+  });
+}
+
+export { gsapTransX, gsapTransXScale, gsapTransY, gsapTransFont };

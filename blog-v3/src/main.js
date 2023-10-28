@@ -10,8 +10,8 @@ import piniaPluginPersist from "pinia-plugin-persist";
 import "animate.css";
 // tailwind.css  https://www.tailwindcss.cn/docs
 import "./styles/tailwind.css";
-// svgicon
-import "@/icons/index";
+// svg
+import "virtual:svg-icons-register";
 // 指令
 import vCopy from "./directives/copy";
 import image from "./directives/imageLoading";

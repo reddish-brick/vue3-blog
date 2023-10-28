@@ -6,14 +6,13 @@
 <script setup>
 import MusicList from "./list/index.vue";
 import MusicControl from "./controls/index.vue";
-import { defineComponent, ref, reactive, watch } from "vue";
+import { defineComponent, ref } from "vue";
 import blogAvatar from "@/assets/img/blogAvatar.png";
 
 import { music } from "@/store/index";
 import { storeToRefs } from "pinia";
 
-const musicStore = music();
-const { getIsShow, getIsPaused, getIsToggleImg, getCurrentMusicDesc } = storeToRefs(musicStore);
+const { getIsShow, getIsPaused, getIsToggleImg, getMusicDescription } = storeToRefs(music());
 
 defineComponent({
   name: "MusicPlayer",
@@ -21,71 +20,51 @@ defineComponent({
 
 // 页面初始化播放器隐藏的时候不要做动画
 const clickFlag = ref(false);
-const musicControl = ref();
 
 const toggleDisc = () => {
-  musicStore.setIsShow();
+  music().setIsShow();
   if (!clickFlag.value) {
     clickFlag.value = true;
   }
 };
 
 const playMusic = () => {
-  if (getIsPaused.value) {
-    musicControl.value.playMusic();
-  } else {
-    musicControl.value.pauseMusic();
-  }
+  music().togglePlay();
 };
-
-const musicInfo = reactive({
-  name: "",
-  ar: [
-    {
-      name: "",
-    },
-  ],
-  al: {
-    picUrl: "",
-  },
-});
-
-watch(
-  () => {
-    getCurrentMusicDesc.value;
-  },
-  () => {
-    Object.assign(musicInfo, getCurrentMusicDesc.value);
-  },
-  {
-    deep: true,
-    immediate: true,
-  }
-);
 </script>
 
 <template>
-  <div :class="['music', getIsShow ? 'show-music' : '', !getIsShow && clickFlag ? 'hide-music' : '']">
+  <div
+    :class="['music', getIsShow ? 'show-music' : '', !getIsShow && clickFlag ? 'hide-music' : '']"
+  >
     <div class="flex flex-col justify-center items-center">
       <i class="iconfont icon-off-search change-color" @click="toggleDisc"></i>
       <!-- 播放器列表 -->
       <MusicList class="list" />
       <!-- 播放器控制器 -->
-      <MusicControl ref="musicControl" :autoplay="false" class="control" />
+      <MusicControl />
     </div>
   </div>
   <div :class="['music-disc', getIsPaused ? 'music-left' : '']">
-    <img @click="toggleDisc" :class="['music-img', getIsToggleImg ? '' : 'disc-rotate', getIsPaused ? 'paused' : '']" :src="musicInfo?.al?.picUrl || blogAvatar" alt="music cover" />
+    <img
+      @click="toggleDisc"
+      :class="['music-img', getIsToggleImg ? '' : 'disc-rotate', getIsPaused ? 'paused' : '']"
+      :src="getMusicDescription?.al?.picUrl || blogAvatar"
+      alt="music cover"
+    />
     <div class="info-box">
       <div class="info">
         <div class="text-sm whitespace-nowrap">
-          {{ musicInfo?.name }}
+          {{ getMusicDescription?.name }}
         </div>
         <div class="text-sm whitespace-nowrap">
-          {{ musicInfo?.ar[0]?.name || "歌手走丢了" }}
+          {{ getMusicDescription?.ar[0]?.name || "歌手走丢了" }}
         </div>
       </div>
-      <i :class="['change-color', 'iconfont', getIsPaused ? 'icon-zanting' : 'icon-bofangzhong ']" @click="playMusic"></i>
+      <i
+        :class="['change-color', 'iconfont', getIsPaused ? 'icon-zanting' : 'icon-bofangzhong ']"
+        @click="playMusic"
+      ></i>
     </div>
   </div>
 </template>

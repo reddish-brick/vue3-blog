@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, nextTick, onMounted } from "vue";
+
 const props = defineProps({
   text: {
     type: String,
@@ -45,7 +46,8 @@ const boxStyle = computed(() => {
 
 const realText = computed(() => {
   // 是否被截取
-  const isCutOut = offset.value * props.maxLines < props.text.length * props.fontSize + props.fontSize;
+  const isCutOut =
+    offset.value * props.maxLines < props.text.length * props.fontSize + props.fontSize;
   let realText = props.text;
   if (isCutOut && !expanded.value) {
     realText = props.text.slice(0, offset.value) + "...";
@@ -73,7 +75,9 @@ function isOverflow() {
   }
   if (props.maxLines) {
     // 超出部分 行数 > 最大行数 或则  已经是最大行数但最后一行宽度 + 后面内容超出正常宽度
-    const lastLineOver = !!(len === props.maxLines && lastWidth + slotBoxWidth.value > textBoxWidth.value);
+    const lastLineOver = !!(
+      len === props.maxLines && lastWidth + slotBoxWidth.value > textBoxWidth.value
+    );
     if (len > props.maxLines || lastLineOver) {
       return true;
     }
@@ -112,7 +116,9 @@ onMounted(() => {
 
 <template>
   <div ref="textOverflowRef" :style="boxStyle">
-    <span class="keep" ref="overEllipsisRef" :style="{ color }" :title="realText">{{ realText }}</span>
+    <span class="keep" ref="overEllipsisRef" :style="{ color }" :title="realText">{{
+      realText
+    }}</span>
     <span class="slot-box" ref="slotRef" v-if="showSlotNode">
       <slot :click-toggle="toggle" :expanded="expanded" />
     </span>

@@ -1,9 +1,15 @@
 <script setup>
 import { reactive, ref, watch, h } from "vue";
-import { frontGetChildrenComment, applyComment, thumbUpComment, cancelThumbUp, deleteComment } from "@/api/comment";
+import {
+  frontGetChildrenComment,
+  applyComment,
+  thumbUpComment,
+  cancelThumbUp,
+  deleteComment,
+} from "@/api/comment";
 import { ElNotification, ElMessageBox } from "element-plus";
 
-import Pagination from "@/components/Pagination/pagi-nation.vue";
+import Pagination from "@/components/Pagination/pagination.vue";
 import CommentInput from "./CommentInput.vue";
 import { user } from "@/store/index";
 import Loading from "@/components/Loading/Loading.vue";
@@ -63,7 +69,7 @@ const commentInputRef = ref();
 const isParentApply = ref(false);
 
 // 关闭当前打开的输入评论框
-const closeComment = (type) => {
+const closeComment = () => {
   emits("changeShowApplyInput", false);
   isParentApply.value = false;
   showApplyInput.value = false;
@@ -251,7 +257,11 @@ defineExpose({
 <template>
   <div class="comment-children">
     <div v-if="commentList.length > 0" class="animate__animated animate__fadeIn">
-      <div class="!mt-[0.5rem] flex justify-start items-start" v-for="(comment, index) in commentList" :key="index">
+      <div
+        class="!mt-[0.5rem] flex justify-start items-start"
+        v-for="(comment, index) in commentList"
+        :key="index"
+      >
         <div class="!w-[30px] flex justify-start">
           <el-avatar :src="comment.from_avatar" :size="24" shape="circle"></el-avatar>
         </div>
@@ -266,14 +276,45 @@ defineExpose({
           </div>
           <div class="!mt-[0.5rem]">
             <span class="!mr-[1rem] ip">{{ `IP: ${comment.ipAddress}` }}</span>
-            <span :class="['thumbs', '!mr-[1rem]', 'iconfont', 'icon-icon1', comment.is_like ? 'like-active' : '']" @click="like(comment, index)">
+            <span
+              :class="[
+                'thumbs',
+                '!mr-[1rem]',
+                'iconfont',
+                'icon-icon1',
+                comment.is_like ? 'like-active' : '',
+              ]"
+              @click="like(comment, index)"
+            >
               <span class="!ml-[0.5rem]">{{ comment.thumbs_up }}</span>
             </span>
             <!-- 子评论和主评论共用一个文本框 这里有点绕 -->
-            <span class="!mr-[1rem] apply cursor-pointer" v-if="userStore.getUserInfo.id != comment.from_id && !showApplyInput && !isParentApply" @click="apply(comment, 'children')">回复</span>
-            <span class="!mr-[1rem] apply cursor-pointer" v-if="userStore.getUserInfo.id != comment.from_id && showApplyInput && isParentApply" @click="apply(comment, 'children')">回复</span>
-            <span class="!mr-[1rem] close cursor-pointer" v-if="showApplyInput && !isParentApply" @click="closeComment">关闭</span>
-            <span class="!mr-[1rem] delete cursor-pointer" v-if="userStore.getUserInfo.id == comment.from_id || userStore.getUserInfo.role == 1" @click="deleteOwnComment(comment.id)">删除</span>
+            <span
+              class="!mr-[1rem] apply cursor-pointer"
+              v-if="
+                userStore.getUserInfo.id != comment.from_id && !showApplyInput && !isParentApply
+              "
+              @click="apply(comment, 'children')"
+              >回复</span
+            >
+            <span
+              class="!mr-[1rem] apply cursor-pointer"
+              v-if="userStore.getUserInfo.id != comment.from_id && showApplyInput && isParentApply"
+              @click="apply(comment, 'children')"
+              >回复</span
+            >
+            <span
+              class="!mr-[1rem] close cursor-pointer"
+              v-if="showApplyInput && !isParentApply"
+              @click="closeComment"
+              >关闭</span
+            >
+            <span
+              class="!mr-[1rem] delete cursor-pointer"
+              v-if="userStore.getUserInfo.id == comment.from_id || userStore.getUserInfo.role == 1"
+              @click="deleteOwnComment(comment.id)"
+              >删除</span
+            >
           </div>
           <div class="!mt-[0.5rem]">{{ comment.createdAt }}</div>
         </div>
@@ -282,10 +323,24 @@ defineExpose({
     <Loading :size="24" v-if="params.loading" />
     <template v-if="showApplyInput">
       <div class="w-[100%] flex justify-start items-center">
-        <CommentInput ref="commentInputRef" v-model:inputText="commentText" :placeholder="commentTo.from_name" :show-publish-button="false" @publish="publish" />
+        <CommentInput
+          ref="commentInputRef"
+          v-model:inputText="commentText"
+          :placeholder="commentTo.from_name"
+          :show-publish-button="false"
+          @publish="publish"
+        />
       </div>
     </template>
-    <Pagination class="animate__animated animate__fadeIn" v-if="commentTotal > 0 && commentTotal > params.size" :size="params.size" :current="params.current" layout="prev, pager, next" :total="commentTotal" @pagination="pagination" />
+    <Pagination
+      class="animate__animated animate__fadeIn"
+      v-if="commentTotal > 0"
+      :size="params.size"
+      :current="params.current"
+      layout="prev, pager, next"
+      :total="commentTotal"
+      @pagination="pagination"
+    />
   </div>
 </template>
 
@@ -295,6 +350,7 @@ defineExpose({
 }
 
 .content {
+  font-size: 14px;
   word-break: break-all;
   vertical-align: middle;
 }

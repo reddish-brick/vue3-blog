@@ -1,18 +1,24 @@
 <template>
-  <div :class="[backTopShow ? 'back-top-show' : 'back-top-hidden', 'back-top']" :style="`bottom: ${backTopProps.bottom};right:${backTopProps.right};height: ${backTopProps.width};width:${backTopProps.width};`">
-    <svg-icon :style="{ transform: `rotateZ(${props.rotateDeg}deg)` }" :name="svgThemeName" :width="svgWidth" @click="scrollToTop"></svg-icon>
+  <div
+    :class="[backTopShow ? 'back-top-show' : 'back-top-hidden', 'back-top']"
+    :style="`bottom: ${backTopProps.bottom};right:${backTopProps.right};height: ${backTopProps.width};width:${backTopProps.width};`"
+  >
+    <svg-icon
+      :style="{ transform: `rotateZ(${props.rotateDeg}deg)` }"
+      :name="svgThemeName"
+      :width="svgWidth"
+      @click="scrollToTop"
+    ></svg-icon>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, watch, computed } from "vue";
-import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { staticData } from "@/store/index.js";
 
 const { mainTheme } = storeToRefs(staticData());
 
-const route = useRoute();
 const props = defineProps({
   bottom: {
     type: [String, Number],
@@ -49,7 +55,7 @@ const backTopProps = reactive({
 
 watch(
   () => props,
-  (newV) => {
+  () => {
     backTopProps.bottom = /^[\d|.]*$/g.test(props.bottom) ? props.bottom + "rem" : props.bottom;
     backTopProps.right = /^[\d|.]*$/g.test(props.right) ? props.right + "rem" : props.right;
   },
@@ -70,7 +76,8 @@ onMounted(() => {
 const backTopShow = ref(false);
 const scroll = () => {
   let scrollTop = ref(0);
-  scrollTop.value = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+  scrollTop.value =
+    window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
   if (scrollTop.value > 200) {
     // 大于200显示
     backTopShow.value = true;

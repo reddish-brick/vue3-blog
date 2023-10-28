@@ -1,10 +1,6 @@
-<template>
-  <svg :class="svgProps.customClass" :style="`width: ${svgProps.width};height: ${svgProps.width || svgProps.height};`" aria-hidden="true">
-    <use :xlink:href="svgProps.name"></use>
-  </svg>
-</template>
 <script setup>
 import { watch, reactive } from "vue";
+
 const props = defineProps({
   name: { type: String },
   customClass: { type: String },
@@ -27,7 +23,7 @@ const svgProps = reactive({
 
 watch(
   () => props,
-  (newV) => {
+  () => {
     // 判断给单位没有
     svgProps.width = /^[\d|.]*$/g.test(props.width) ? props.width + "rem" : props.width;
     svgProps.height = /^[\d|.]*$/g.test(props.height) ? props.height + "rem" : props.height;
@@ -40,6 +36,16 @@ watch(
   }
 );
 </script>
+<template>
+  <svg
+    :class="svgProps.customClass"
+    :style="`width: ${svgProps.width};height: ${svgProps.width || svgProps.height};`"
+    aria-hidden="true"
+  >
+    <use :xlink:href="svgProps.name"></use>
+  </svg>
+</template>
+
 <style scoped>
 .svg-icon {
   vertical-align: -0.15rem;

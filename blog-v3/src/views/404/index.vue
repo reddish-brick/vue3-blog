@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 
 const router = useRouter();
 
@@ -16,13 +16,19 @@ const timer = setInterval(() => {
     timer && clearInterval(timer);
   }
 }, 1000);
+
+onBeforeUnmount(() => {
+  timer && clearInterval(timer);
+});
 </script>
 
 <template>
   <div class="not-found">
     <div class="flex items-center">
       <el-button type="primary" size="small" @click="goBack('back')">返回上一页</el-button>
-      <span class="!ml-[5px] cursor-pointer text-sm hover:text-primary-blue" @click="goBack">返回首页</span>
+      <span class="!ml-[5px] cursor-pointer text-sm hover:text-primary-blue" @click="goBack"
+        >返回首页</span
+      >
     </div>
     <p class="!mt-[5px]">{{ 5 - time }} 秒后自动返回首页......</p>
 

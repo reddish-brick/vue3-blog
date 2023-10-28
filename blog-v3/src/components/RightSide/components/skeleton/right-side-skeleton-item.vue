@@ -1,3 +1,6 @@
+<script setup>
+import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+</script>
 <template>
   <div class="flex_r_start">
     <SkeletonItem variant="circle" width="1.8rem" height="1.8rem" />

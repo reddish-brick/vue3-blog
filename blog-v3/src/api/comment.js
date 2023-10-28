@@ -70,4 +70,4 @@ export const frontGetCommentTotal = (data) => {
       resolve(res);
     });
   });
-}
+};

@@ -191,13 +191,18 @@ onMounted(() => {
       >
         <div class="album-card">
           <div class="flex_r_b pad5">
-            <div class="album-title" @click="operate('photos', item)">
+            <div class="album-title">
               <span :title="item.album_name">{{ item.album_name }}</span>
-              <el-icon>
-                <Paperclip />
-              </el-icon>
             </div>
             <div class="operate flex_r_b">
+              <el-icon
+                class="mr-[5px]"
+                color="#67c23a"
+                size="18"
+                @click="operate('photos', item)"
+              >
+                <Paperclip />
+              </el-icon>
               <el-icon color="#66b1ff" size="18" @click="operate('edit', item)">
                 <Edit />
               </el-icon>

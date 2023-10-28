@@ -6,11 +6,13 @@
 
 var app = require("./src/main.js")
 
+
 /**
  * Get port from environment and store in Express.
  */
 const { APP_PORT } = require("./src/config/config.default.js")
 var port = normalizePort(APP_PORT || "3000")
+
 
 /**
  * Create HTTP server.
@@ -51,7 +53,7 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+function onError(error, ctx) {
   try {
     if (error.syscall !== "listen") {
       throw error
@@ -75,6 +77,8 @@ function onError(error) {
   } catch (error) {
     console.error(error)
   }
+
+
 }
 
 /**

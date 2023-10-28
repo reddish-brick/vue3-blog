@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, watch, onBeforeUnmount, nextTick } from "vue";
 const props = defineProps({
   typeList: {
     type: Array,
@@ -24,47 +24,54 @@ const props = defineProps({
 const loopList = ref([]);
 const arr = [];
 
-onMounted(() => {
-  if (!props.typeList.length) return;
-  let lastTime = 0;
-  props.typeList.forEach((v, index) => {
-    if (!v.length) {
-      console.error(`第${index + 1}条语句为空，不能打印`);
-      return;
-    }
-    if (v.length < 3) {
-      console.error(`第${index + 1}条语句字数太少，最少三个字`);
-      return;
-    }
-    let loop = {
-      target: v,
-      delay: lastTime,
-    };
-    loopList.value.push(loop);
-    // 计算这一句播放的时间，用于下一句的播放
-    lastTime = Math.round((lastTime + v.length * props.wordPrintTime + props.timeSpace) * 10) / 10;
-  });
-
-  loopList.value.forEach((loop) => {
-    let timer = setTimeout(() => {
-      const writers = document.getElementById("writer");
-      if (!writers) return;
-      let num = 0,
-        str = "";
-      let interTimer = setInterval(() => {
-        str += loop.target.charAt(num);
-        writers.innerHTML = str;
-        if (num < loop.target.length) {
-          num++;
-        } else {
-          clearInterval(interTimer);
-          interTimer = null;
+watch(
+  () => props.typeList,
+  () => {
+    nextTick(() => {
+      if (!props.typeList.length) return;
+      let lastTime = 0;
+      props.typeList.forEach((v, index) => {
+        if (!v.length) {
+          console.error(`第${index + 1}条语句为空，不能打印`);
+          return;
         }
-      }, props.wordPrintTime * 1000);
-    }, loop.delay * 1000);
-    arr.push(timer);
-  });
-});
+
+        let loop = {
+          target: v,
+          delay: lastTime,
+        };
+        loopList.value.push(loop);
+        // 计算这一句播放的时间，用于下一句的播放
+        lastTime =
+          Math.round((lastTime + v.length * props.wordPrintTime + props.timeSpace) * 10) / 10;
+      });
+
+      loopList.value.forEach((loop) => {
+        let timer = setTimeout(() => {
+          const writers = document.getElementById("writer");
+          if (!writers) return;
+          let num = 0,
+            str = "";
+          let interTimer = setInterval(() => {
+            str += loop.target.charAt(num);
+            writers.innerHTML = str;
+            if (num < loop.target.length) {
+              num++;
+            } else {
+              clearInterval(interTimer);
+              interTimer = null;
+            }
+          }, props.wordPrintTime * 1000);
+        }, loop.delay * 1000);
+        arr.push(timer);
+      });
+    });
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+);
 
 onBeforeUnmount(() => {
   arr.length &&
@@ -86,16 +93,19 @@ onBeforeUnmount(() => {
   color: #fffcec;
   font-size: 1em;
   cursor: pointer;
+  text-align: center;
 }
 
 .space {
   vertical-align: text-bottom;
   animation: showInfinite 0.8s infinite both;
 }
+
 @keyframes showInfinite {
   0% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }

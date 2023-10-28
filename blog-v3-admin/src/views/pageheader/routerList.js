@@ -21,7 +21,12 @@ export const routerList = [
   },
   {
     label: "友链",
-    value: "Link",
+    value: "LinkList",
+    disabled: false
+  },
+  {
+    label: "申请友链",
+    value: "LinkApply",
     disabled: false
   },
   {
@@ -44,11 +49,6 @@ export const routerList = [
     value: "Talk",
     disabled: false
   },
-  // {
-  //   label: "留言",
-  //   value: "Message",
-  //   disabled: false
-  // },
   {
     label: "登录",
     value: "Login",

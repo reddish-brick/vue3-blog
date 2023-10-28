@@ -110,7 +110,16 @@
 
 .el-avatar {
   transition: ease-in-out 1s;
-  background: (90deg, #ffffff 1%, #ead2ea 10.2%, #e4d5ee 19.6%, #d1def3 36.8%, #b5dee5 62.2%, #cfebf3 88.9%, #ffffff 99%) !important;
+  background: (
+    90deg,
+    #ffffff 1%,
+    #ead2ea 10.2%,
+    #e4d5ee 19.6%,
+    #d1def3 36.8%,
+    #b5dee5 62.2%,
+    #cfebf3 88.9%,
+    #ffffff 99%
+  ) !important;
 }
 
 .el-avatar:hover {
@@ -204,6 +213,37 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.el-form-item {
+  padding: 15px 0;
+}
+
+.el-form-item__label {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.el-input__wrapper {
+  border-radius: 12px;
+}
+
+.el-textarea__inner::placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+input::-webkit-input-placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+input::-moz-placeholder {
+  font-size: 16px;
+  font-weight: 700;
+}
+input:-ms-input-placeholder {
+  font-size: 16px;
+  font-weight: 700;
 }
 
 // 手机

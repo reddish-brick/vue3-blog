@@ -55,17 +55,30 @@ watch(
     <el-row class="category">
       <el-col :xs="12" :sm="6" v-for="(item, index) in Object.keys(currenCategory)" :key="index">
         <el-card class="card-hover">
-          <div class="category-item animate__animated animate__fadeIn" @click="goToSiteList(routeType, item)">
-            <div class="left" @mouseenter="mouseEnterItem(routeType, index)" @mouseleave="mouseLeaveItem">
+          <div
+            class="category-item animate__animated animate__fadeIn"
+            @click="goToSiteList(routeType, item)"
+          >
+            <div
+              class="left"
+              @mouseenter="mouseEnterItem(routeType, index)"
+              @mouseleave="mouseLeaveItem"
+            >
               <span :class="['top', activeType && active == index ? 'top-animate' : '']"></span>
               <el-avatar :size="60"
                 ><span class="avatar-font">{{ currenCategory[item].name }}</span></el-avatar
               >
-              <span :class="['bottom', activeType && active == index ? 'bottom-animate' : '']"></span>
+              <span
+                :class="['bottom', activeType && active == index ? 'bottom-animate' : '']"
+              ></span>
             </div>
             <div class="right">
-              <span :title="currenCategory[item].name" class="name">{{ currenCategory[item].name }}</span>
-              <span :title="currenCategory[item].desc" class="desc"> {{ currenCategory[item].desc }}</span>
+              <span :title="currenCategory[item].name" class="name">{{
+                currenCategory[item].name
+              }}</span>
+              <span :title="currenCategory[item].desc" class="desc">
+                {{ currenCategory[item].desc }}</span
+              >
             </div>
           </div>
         </el-card>
@@ -193,6 +206,15 @@ watch(
 
 :deep(.el-avatar) {
   color: var(--font-color);
-  background: linear-gradient(90deg, #dfd2d2 1%, #ead2ea 10.2%, #e4d5ee 19.6%, #d1def3 36.8%, #b5dee5 62.2%, #cfebf3 88.9%, #dde7ea 99%) !important;
+  background: linear-gradient(
+    90deg,
+    #dfd2d2 1%,
+    #ead2ea 10.2%,
+    #e4d5ee 19.6%,
+    #d1def3 36.8%,
+    #b5dee5 62.2%,
+    #cfebf3 88.9%,
+    #dde7ea 99%
+  ) !important;
 }
 </style>

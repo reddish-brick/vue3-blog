@@ -1,8 +1,8 @@
 const image = {
-  beforeMount(el) {
+  beforeMount(el, binding) {
+    if (!binding.value) return;
     var img = new Image();
-    img.src = el.getAttribute("data-src");
-    if (!el.getAttribute("data-src")) return;
+    img.src = binding.value;
     // 创建一个loading的img标签
     let cup = document.createElement("div");
     cup.classList.add("coffee_cup");

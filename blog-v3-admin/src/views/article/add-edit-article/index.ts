@@ -144,7 +144,7 @@ export function useArticle() {
     }
   }
 
-  // 上传文章图片
+  // 上传md文章图片
   async function uploadImage(files, callback) {
     const res = await Promise.all(
       files.map(file => {

@@ -1,3 +1,7 @@
+<script setup>
+import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+</script>
+
 <template>
   <div class="pc">
     <SkeletonItem variant="image" width="45%" height="20rem" />

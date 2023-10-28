@@ -1,5 +1,9 @@
 <script setup>
 import { useRouter } from "vue-router";
+
+import SkeletonItem from "../SkeletonItem/skeleton-item.vue";
+import Pagination from "../Pagination/pagination.vue";
+
 const emit = defineEmits(["pagination"]);
 
 let layout = " prev, pager, next"; //分页组件会展示的功能项
@@ -39,7 +43,7 @@ const goToArticle = (article) => {
       <template #template>
         <SkeletonItem variant="text" width="4rem" height="2rem" />
         <SkeletonItem class="skeleton-left" variant="text" width="0.5rem" height="60rem" />
-        <div class="flex_r_start skeleton-right" v-for="i in 10">
+        <div class="flex_r_start skeleton-right" v-for="i in 10" :key="i">
           <SkeletonItem variant="image" width="8rem" height="8rem" />
           <div class="flex_c_center skeleton-right__item">
             <SkeletonItem variant="text" width="4rem" height="25px" />
@@ -51,12 +55,25 @@ const goToArticle = (article) => {
     <template v-else>
       <div v-for="(item, index) in archives" :key="index">
         <div class="year to_pointer">{{ item.year }}</div>
-        <el-timeline-item v-for="article in item.articleList" size="large" :hollow="true" hide-timestamp :center="true" class="my-timeline-item border-orange">
+        <el-timeline-item
+          v-for="article in item.articleList"
+          :key="article.id"
+          size="large"
+          :hollow="true"
+          hide-timestamp
+          :center="true"
+          class="my-timeline-item border-orange"
+        >
           <div class="flex_r_start timeline">
-            <div class="timeline-cover scale" v-image :data-src="article.article_cover">
-              <el-image class="w-[100%] h-[100%]" fit="cover" :src="article.article_cover" @click="goToArticle(article)">
+            <div class="timeline-cover scale" v-image="article.article_cover">
+              <el-image
+                class="w-[100%] h-[100%]"
+                fit="cover"
+                :src="article.article_cover"
+                @click="goToArticle(article)"
+              >
                 <template #error>
-                  <svg-icon name="image" :width="5" :height="5"></svg-icon>
+                  <svg-icon name="image404" :width="5" :height="5"></svg-icon>
                 </template>
               </el-image>
             </div>
@@ -73,7 +90,13 @@ const goToArticle = (article) => {
       </div>
     </template>
   </el-timeline>
-  <pagi-nation :size="param.size" :current="param.current" :layout="layout" :total="total" @pagination="pagination" />
+  <Pagination
+    :size="param.size"
+    :current="param.current"
+    :layout="layout"
+    :total="total"
+    @pagination="pagination"
+  />
 </template>
 
 <style lang="scss" scoped>

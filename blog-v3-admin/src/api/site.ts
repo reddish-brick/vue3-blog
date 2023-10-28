@@ -2,7 +2,7 @@ import { getToken } from "@/utils/auth";
 import { http } from "@/utils/http";
 import Axios from "axios";
 import { ElMessage } from "element-plus";
-import { compressAccurately } from "image-conversion";
+import imageCompression from "browser-image-compression";
 
 export type SiteResult = {
   code: number;
@@ -38,7 +38,7 @@ export const imgUpload = async data => {
   // 文件压缩 太大了上传不了，我的服务器比较垃圾
   let res;
   // 没有raw.size 就表示已经压缩过了（多图片上传那里我压缩了一次） 有的话小于800不用压缩
-  if (data.raw.size > 800) {
+  if (data.raw.size > 820) {
     const file = await conversion(data.raw);
     if (!file) {
       ElMessage.error("图片上传失败");
@@ -72,8 +72,8 @@ export const imgUpload = async data => {
 export const mdImgUpload = async data => {
   // 文件压缩 太大了上传不了，我的服务器比较垃圾
   let res;
-  // 没有raw.size 就表示已经压缩过了（多图片上传那里我压缩了一次） 有的话小于800不用压缩
-  if (data.size > 800) {
+  // 没有raw.size 就表示已经压缩过了（多图片上传那里我压缩了一次） 有的话小于820不用压缩
+  if (data.size > 820) {
     const file = await conversion(data);
     if (!file) {
       ElMessage.error("图片上传失败");
@@ -106,8 +106,7 @@ export const mdImgUpload = async data => {
 // 图片压缩
 export const conversion = file => {
   return new Promise<Blob>(resolve => {
-    compressAccurately(file, 800).then(res => {
-      // The res in the promise is a compressed Blob type (which can be treated as a File type) file;
+    imageCompression(file, { maxSizeMB: 0.8 }).then(res => {
       resolve(res);
     });
   });

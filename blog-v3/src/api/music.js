@@ -12,9 +12,11 @@ export const reqToplist = () => {
 /** 获取榜单歌曲列表 */
 export const reqTopDetaliList = ({ id, limit, offset }) => {
   return new Promise((resolve, reject) => {
-    http.get(`/wapi/playlist/track/all?id=${id}&limit=${limit}&offset=${offset}`, {}).then((res) => {
-      resolve(res);
-    });
+    http
+      .get(`/wapi/playlist/track/all?id=${id}&limit=${limit}&offset=${offset}`, {})
+      .then((res) => {
+        resolve(res);
+      });
   });
 };
 
@@ -38,9 +40,11 @@ export const reqSearch = (keyWords) => {
 // 根据歌手搜索热门歌曲
 export const reqSearchSingerHot = ({ id, limit, offset }) => {
   return new Promise((resolve, reject) => {
-    http.get(`/wapi/artist/top/song?id=${id}&offset=${offset}&limit=${limit}&order=hot`, {}).then((res) => {
-      resolve(res);
-    });
+    http
+      .get(`/wapi/artist/top/song?id=${id}&offset=${offset}&limit=${limit}&order=hot`, {})
+      .then((res) => {
+        resolve(res);
+      });
   });
 };
 // 根据歌曲id获取歌词
@@ -50,4 +54,4 @@ export const reqMusicLyricById = (id) => {
       resolve(res);
     });
   });
-}
+};

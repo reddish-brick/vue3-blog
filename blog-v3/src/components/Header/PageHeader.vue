@@ -1,9 +1,14 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { staticData } from "@/store/index.js";
 import { storeToRefs } from "pinia";
+
 import { numberFormate } from "@/utils/tool";
+import { gsapTransFont } from "@/utils/transform";
+
+import Tooltip from "../ToolTip/tooltip.vue";
+import GsapCount from "@/components/GsapCount/index";
 
 const staticStore = staticData();
 const { codeTheme, previewTheme, getPageHeaderList } = storeToRefs(staticStore);
@@ -69,8 +74,12 @@ const getBgCover = computed(() => {
     let index = bgList.findIndex((bg) => bg.route_name == route.name);
     url = index == -1 ? "https://mrzym.gitee.io/blogimg/cover/cute.jpg" : bgList[index].bg_url;
   }
+  // eslint-disable-next-line
   finalUrl.value = url;
   return `background-image: url(${url});}`;
+});
+const getTitle = computed(() => {
+  return route.query.pageTitle ? route.meta.name + " - " + route.query.pageTitle : route.meta.name;
 });
 
 const toggleAlbum = (item) => {
@@ -83,102 +92,168 @@ const toggleAlbum = (item) => {
     },
   });
 };
+
+watch(
+  () => route.path,
+  () => {
+    nextTick(() => {
+      gsapTransFont(".char");
+    });
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <template>
-  <div class="page-name back-ground-image fadeIn" :style="getBgCover">
+  <div class="page-header fadeIn" :style="getBgCover">
+    <div class="loading !pt-[80px]" v-image="finalUrl"></div>
     <div v-if="route.path != '/article'" class="route-font animate__animated animate__fadeIn">
-      {{ route.query.pageTitle ? route.meta.name + " - " + route.query.pageTitle : route.meta.name }}
-      <div class="loading">
-        <div v-image :data-src="finalUrl"></div>
-      </div>
+      <span style="display: inline-block" class="char" v-for="i in getTitle.length" :key="i">
+        {{ getTitle.charAt(i - 1) }}
+      </span>
       <div class="image-list" v-if="route.path == '/photos' && photoAlbumList.length">
-        <div :class="['image-box', route.query.id == item.id ? 'current' : '']" v-for="item in photoAlbumList" :key="item.id">
-          <el-image class="image" :src="item.album_cover" fit="cover" lazy @click="toggleAlbum(item)">
+        <div
+          :class="['image-box', route.query.id == item.id ? 'current' : '']"
+          v-for="item in photoAlbumList"
+          :key="item.id"
+        >
+          <el-image
+            class="image"
+            :src="item.album_cover"
+            fit="cover"
+            lazy
+            @click="toggleAlbum(item)"
+          >
             <template #error>
-              <svg-icon name="image" :width="4" :height="4"></svg-icon>
+              <svg-icon name="image404" :width="4" :height="4"></svg-icon>
             </template>
           </el-image>
         </div>
       </div>
     </div>
     <div v-else class="article main-article">
-      <div v-if="loading" class="loading">
-        <div class="coffee_cup"></div>
+      <div class="loading" v-image="props.article.article_cover"></div>
+      <Tooltip
+        width="80%"
+        weight="500"
+        size="2.4rem"
+        color="#fff"
+        align="center"
+        :name="article.article_title"
+      />
+      <div class="animate__animated animate__fadeIn !mt-[20px]">
+        <span class="to_pointer">
+          <i class="iconfont icon-calendar2"></i>
+          <span class="meta-label">发表于</span>
+          <span class="meta-value">{{ article.createdAt }}</span>
+        </span>
+        <span class="to_pointer">
+          <i class="iconfont icon-schedule"></i>
+          <span class="meta-label">更新于</span>
+          <span class="meta-value">{{ article.updatedAt }}</span>
+        </span>
+        <span class="meta-separator"></span>
+        <span class="to_pointer">
+          <i class="iconfont icon-folder"></i>
+          <span class="meta-value">{{ article.categoryName }}</span>
+        </span>
+        <span class="meta-separator"></span>
+        <span class="to_pointer">
+          <i class="iconfont icon-label_fill"></i>
+          <span class="meta-value" v-for="(item, index) in article.tagNameList" :key="item">{{
+            index + 1 == article.tagNameList.length ? item : item + "、"
+          }}</span>
+        </span>
+        <span class="meta-separator"></span>
+        <span class="to_pointer">
+          <i class="iconfont icon-icon1"></i>
+          <span class="meta-label">点赞数</span>
+          <GsapCount
+            class="meta-value"
+            v-if="article.thumbs_up_times - 0 < 1000"
+            :value="article.thumbs_up_times"
+          />
+          <span v-else class="meta-value">
+            {{ numberFormate(article.thumbs_up_times) }}
+          </span>
+        </span>
+        <span class="meta-separator"></span>
+        <span class="to_pointer">
+          <i class="iconfont icon-chakan"></i>
+          <span class="meta-label">浏览次数</span>
+          <GsapCount
+            class="meta-value"
+            v-if="article.view_times - 0 < 1000"
+            :value="article.view_times"
+          />
+          <span v-else class="meta-value">{{ numberFormate(article.view_times) }}</span>
+        </span>
+        <span class="meta-separator"></span>
+        <span class="to_pointer">
+          <i class="iconfont icon-speechbubble"></i>
+          <span class="meta-label">阅读时长</span>
+          <span class="meta-value">{{ readingDuration(article.reading_duration) }}</span>
+        </span>
       </div>
-      <template v-else>
-        <tooltip width="80%" weight="500" size="2.4rem" color="#a2d2f4" align="center" :name="article.article_title" />
-        <div class="animate__animated animate__fadeIn">
-          <span class="to_pointer">
-            <i class="iconfont icon-calendar2"></i>
-            <span class="meta-label">发表于</span>
-            <span class="meta-value">{{ article.createdAt }}</span>
-          </span>
-          <span class="to_pointer">
-            <i class="iconfont icon-schedule"></i>
-            <span class="meta-label">更新于</span>
-            <span class="meta-value">{{ article.updatedAt }}</span>
-          </span>
-          <span class="meta-separator"></span>
-          <span class="to_pointer">
-            <i class="iconfont icon-folder"></i>
-            <span class="meta-value">{{ article.categoryName }}</span>
-          </span>
-          <span class="meta-separator"></span>
-          <span class="to_pointer">
-            <i class="iconfont icon-label_fill"></i>
-            <span class="meta-value" v-for="(item, index) in article.tagNameList" :key="item">{{ index + 1 == article.tagNameList.length ? item : item + "、" }}</span>
-          </span>
-          <span class="meta-separator"></span>
-          <span class="to_pointer">
-            <i class="iconfont icon-icon1"></i>
-            <span class="meta-label">点赞数</span>
-            <span class="meta-value">{{ numberFormate(article.thumbs_up_times) }}</span>
-          </span>
-          <span class="meta-separator"></span>
-          <span class="to_pointer">
-            <i class="iconfont icon-chakan"></i>
-            <span class="meta-label">浏览次数</span>
-            <span class="meta-value">{{ numberFormate(article.view_times) }}</span>
-          </span>
-          <span class="meta-separator"></span>
-          <span class="to_pointer">
-            <i class="iconfont icon-speechbubble"></i>
-            <span class="meta-label">阅读时长</span>
-            <span class="meta-value">{{ readingDuration(article.reading_duration) }}</span>
-          </span>
-        </div>
-        <div class="toggle-theme animate__animated animate__fadeIn">
-          <el-dropdown class="theme-card-dropdown">
-            <div class="flex_c_center">
-              <span>预览主题</span>
-              <span>{{ previewTheme }}</span>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item v-for="(item, index) in staticStore.previewThemeList" :key="index" @click="toggleMdTheme('previewTheme', item)">{{ item }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          <el-dropdown class="theme-card-dropdown">
-            <div class="flex_c_center">
-              <span>代码主题</span>
-              <span>{{ codeTheme }}</span>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item v-for="(item, index) in staticStore.codeThemeList" :key="index" @click="toggleMdTheme('codeTheme', item)">{{ item }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </template>
+      <div class="toggle-theme animate__animated animate__fadeIn">
+        <el-dropdown class="theme-card-dropdown">
+          <div class="flex_c_center">
+            <span>预览主题</span>
+            <span>{{ previewTheme }}</span>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(item, index) in staticStore.previewThemeList"
+                :key="index"
+                @click="toggleMdTheme('previewTheme', item)"
+                >{{ item }}</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-dropdown class="theme-card-dropdown">
+          <div class="flex_c_center">
+            <span>代码主题</span>
+            <span>{{ codeTheme }}</span>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(item, index) in staticStore.codeThemeList"
+                :key="index"
+                @click="toggleMdTheme('codeTheme', item)"
+                >{{ item }}</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.back-ground-image {
+.page-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  .loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   position: relative;
   background-color: #8a7e90;
   background-position: center center;
@@ -194,35 +269,29 @@ const toggleAlbum = (item) => {
     display: block;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
   }
-}
-.loading {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.page-name {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
 
   .route-font {
-    font-size: 2.8rem;
+    font-size: 3.2rem;
     font-weight: 500;
     line-height: 2.4;
     text-align: center;
     color: var(--router-color);
     z-index: 999;
+    cursor: pointer;
+    transition: all 0.3s;
 
-    &:hover {
-      cursor: pointer;
-      color: var(--primary);
-    }
+    text-shadow:
+      0 1px 0 hsl(174, 5%, 80%),
+      0 2px 0 hsl(174, 5%, 75%),
+      0 3px 0 hsl(174, 5%, 70%),
+      0 0 5px rgba(0, 0, 0, 0.05),
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      0 3px 5px rgba(0, 0, 0, 0.2),
+      0 5px 10px rgba(0, 0, 0, 0.2),
+      0 10px 10px rgba(0, 0, 0, 0.2),
+      0 20px 20px rgba(0, 0, 0, 0.3);
   }
 
   .article {
@@ -233,7 +302,7 @@ const toggleAlbum = (item) => {
     margin-top: 5rem;
     color: transparent;
     text-align: center;
-    color: var(--router-color);
+    color: #fff;
 
     .to_pointer {
       padding: 0 0.3rem;
@@ -287,15 +356,19 @@ const toggleAlbum = (item) => {
       display: block;
       padding: 0.2rem 0;
       background: transparent;
-      border: 1px solid var(--router-color);
-      color: var(--router-color);
-      border-radius: 5px;
+      border: 1px solid #fff;
+      color: #fff;
+      border-radius: 20px;
       cursor: pointer;
+      transition: all 0.5s;
 
       span {
         &:first-child {
           line-height: 1.2;
         }
+      }
+      &:hover {
+        transform: translateY(-3px);
       }
     }
   }

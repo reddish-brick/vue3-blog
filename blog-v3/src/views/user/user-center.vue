@@ -8,7 +8,8 @@ import { ElNotification, ElMessageBox } from "element-plus";
 import router from "@/router";
 
 const userStore = user();
-const REGEXP_PWD = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,18}$/;
+const REGEXP_PWD =
+  /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,18}$/;
 const passwordV = (rule, value, cb) => {
   if (!value) {
     return cb(new Error("请输入密码"));
@@ -172,53 +173,106 @@ onMounted(async () => {
 
 <template>
   <PageHeader />
-  <div class="center_box">
+  <div class="center_box flex flex-col justify-center items-center">
     <div class="info">
-      <el-form class="info-form" ref="infoFormRef" :model="infoForm" :rules="infoRules" label-width="120px" label-suffix=":">
+      <el-form
+        class="info-form"
+        ref="infoFormRef"
+        :model="infoForm"
+        :rules="infoRules"
+        label-width="120px"
+        label-suffix=":"
+      >
+        <div class="title">个人信息</div>
         <el-form-item class="user-avatar" label="头像" prop="avatar">
           <div class="!ml-[50px]">
-            <Upload v-model:file-list="infoForm.avatarList" :limit="1" :width="100" :height="100" :preview="infoPreview" />
+            <Upload
+              v-model:file-list="infoForm.avatarList"
+              :limit="1"
+              :width="100"
+              :height="100"
+              :preview="infoPreview"
+            />
           </div>
         </el-form-item>
         <el-form-item label="昵称" prop="nick_name">
           <span v-if="infoPreview"> {{ infoForm.nick_name }}</span>
-          <el-input v-else v-model="infoForm.nick_name" :style="{ width: '220px' }" placeholder="请输入昵称" clearable />
+          <el-input
+            v-else
+            v-model="infoForm.nick_name"
+            :style="{ width: '220px' }"
+            placeholder="请输入昵称"
+            clearable
+          />
         </el-form-item>
       </el-form>
       <div class="pos">
-        <el-button v-if="infoPreview" class="password-button" type="primary" @click="infoPreview = false">编辑</el-button>
+        <el-button v-if="infoPreview" class="apply-button" @click="infoPreview = false"
+          >编辑</el-button
+        >
         <div v-else>
-          <el-button class="btn" type="info" @click="infoPreview = true">取消</el-button>
-          <el-button class="btn" type="danger" :disabled="loading" :loading="loading" @click="updateInfo">保存</el-button>
+          <el-button class="apply-button cancel" type="info" @click="infoPreview = true"
+            >取消</el-button
+          >
+          <el-button
+            class="apply-button"
+            type="danger"
+            :disabled="loading"
+            :loading="loading"
+            @click="updateInfo"
+            >保存</el-button
+          >
         </div>
       </div>
+      <el-form
+        class="info-form !mt-[50px]"
+        ref="pwdFormRef"
+        :model="pwdForm"
+        :rules="pwdRules"
+        label-width="100px"
+        label-suffix=":"
+      >
+        <div class="title">密码修改</div>
+        <el-form-item label="原密码" prop="password">
+          <el-input
+            v-model="pwdForm.password"
+            :style="{ width: '220px' }"
+            placeholder="请输入原密码"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="新密码" prop="password1">
+          <el-input
+            type="password"
+            v-model="pwdForm.password1"
+            :style="{ width: '220px' }"
+            placeholder="请输入新密码"
+            clearable
+          />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="password2">
+          <el-input
+            type="password"
+            v-model="pwdForm.password2"
+            :style="{ width: '220px' }"
+            placeholder="请确认密码"
+            clearable
+          />
+        </el-form-item>
+      </el-form>
+      <div class="pos">
+        <el-button class="apply-button" type="primary" @click="updatePassword">修改</el-button>
+      </div>
     </div>
-    <el-collapse class="password">
-      <el-collapse-item title="修改密码" name="applay">
-        <el-form class="password-form" ref="pwdFormRef" :model="pwdForm" :rules="pwdRules" label-width="100px" label-suffix=":">
-          <el-form-item label="原密码" prop="password">
-            <el-input v-model="pwdForm.password" :style="{ width: '200px' }" placeholder="请输入原密码" clearable />
-          </el-form-item>
-          <el-form-item label="新密码" prop="password1">
-            <el-input type="password" v-model="pwdForm.password1" :style="{ width: '200px' }" placeholder="请输入新密码" clearable />
-          </el-form-item>
-          <el-form-item label="确认密码" prop="password2">
-            <el-input type="password" v-model="pwdForm.password2" :style="{ width: '200px' }" placeholder="请确认密码" clearable />
-          </el-form-item>
-        </el-form>
-        <div class="pos">
-          <el-button class="password-button" type="primary" @click="updatePassword">修改</el-button>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .info {
-  margin: 3.75px;
+  max-width: 400px;
   .pos {
-    padding: 0.5rem 0 0 10rem;
+    width: 400px;
+    padding: 0.8rem 0 0 10rem;
   }
 
   &-button {
@@ -232,27 +286,28 @@ onMounted(async () => {
     }
   }
 }
-.password {
-  margin: 20px 25px 3.75px 25px;
-  max-width: 600px;
-  .pos {
-    padding: 0.5rem 0 0 10rem;
-  }
 
-  &-button {
-    height: 24px;
-    padding: 0 30px;
-    border: none;
-  }
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 3;
+  text-align: center;
+  color: var(--font-color);
 }
 
-.btn {
-  height: 24px;
-  padding: 0 30px;
+.cancel {
+  color: rgb(237, 105, 105);
+  border: 3px solid rgb(237, 105, 105);
+  transition: all 0.3s;
+  &:hover {
+    color: rgb(236, 61, 61);
+    border: 3px solid rgb(233, 61, 61);
+  }
 }
 
 :deep(.el-form-item) {
   padding: 10px 0;
+  width: 400px;
 }
 
 .user-avatar {

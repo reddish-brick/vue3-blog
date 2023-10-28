@@ -1,26 +1,27 @@
 export function keepLastIndex(dom) {
+  var range;
   if (window.getSelection) {
     //ie11 10 9 ff safari
     dom.focus(); //解决ff不获取焦点无法定位问题
-    var range = window.getSelection(); //创建range
+    range = window.getSelection(); //创建range
     range.selectAllChildren(dom); //range 选择obj下所有子内容
     range.collapseToEnd(); //光标移至最后
   } else if (document.selection) {
-    var range = document.selection.createRange(); //创建选择对象
+    range = document.selection.createRange(); //创建选择对象
     range.moveToElementText(dom); //range定位到obj
     range.collapse(false); //光标移至最后
     range.select();
   }
 }
 
-export function getCurrentIndex(dom) {
+export function getCurrentIndex() {
+  var range;
   if (window.getSelection) {
     //ie11 10 9 ff safari
-    dom.focus(); //解决ff不获取焦点无法定位问题
-    var range = window.getSelection(); //创建range
+    range = window.getSelection(); //创建range
     return range.focusOffset;
   } else if (document.selection) {
-    var range = document.selection.createRange(); //创建选择对象
+    range = document.selection.createRange(); //创建选择对象
     return range.focusOffset;
   }
 }

@@ -2,29 +2,26 @@
 import { defineComponent, h, watch } from "vue";
 
 import { music } from "@/store/index";
-import { PLAYTYPE } from "../../music";
+import { PLAYTYPE } from "../../musicTool";
 import { storeToRefs } from "pinia";
 import { ElNotification } from "element-plus";
 
-const musicStore = music();
-
-const { getCustomerMusicList } = storeToRefs(musicStore);
+const { getCustomerMusicList } = storeToRefs(music());
 
 defineComponent({
   name: "CustomMusicList",
 });
 
 const playMusic = (item) => {
-  // 设置当前播放音乐的id
-  musicStore.setCurrentMusicId(item.id);
+  // 设置当前播放音乐
+  music().setMusicInfo(item.id);
   // 设置播放音乐的详细描述
-  musicStore.setCurrentMusicDesc(item);
-  musicStore.setPlayType(PLAYTYPE.CUSTOM);
+  music().setPlayType(PLAYTYPE.CUSTOM);
 };
 
 const customerDeleteMusic = (item) => {
-  musicStore.setCustomerMusicList("delete", item);
-  musicStore.setPlayType(PLAYTYPE.CUSTOM);
+  music().setCustomerMusicList("delete", item);
+  music().setPlayType(PLAYTYPE.CUSTOM);
 
   ElNotification({
     offset: 60,
@@ -37,7 +34,7 @@ watch(
   () => getCustomerMusicList.value.length,
   () => {
     if (!getCustomerMusicList.value.length) {
-      musicStore.setPlayType("TOP");
+      music().setPlayType("TOP");
     }
   }
 );
@@ -55,20 +52,32 @@ watch(
           </el-col>
         </el-row>
         <el-row class="body">
-          <el-col v-if="getCustomerMusicList.length" class="flex justify-start items-center overflow-auto" :span="24" v-for="item in getCustomerMusicList" :key="item.id">
-            <div class="name" @click="playMusic(item)">
-              <span class="text-overflow" :title="item.name">{{ item.name }}</span>
-            </div>
-            <div class="author">
-              <span class="text-overflow">{{ item.hasOwnProperty("ar") ? item.ar[0].name : "" }}</span>
-            </div>
-            <div class="other">
-              <span class="text-overflow">{{ item.hasOwnProperty("alia") ? item.alia[0] : "" }}</span>
-            </div>
-            <div class="delete-music">
-              <svg-icon name="delete" width="1rem" @click="customerDeleteMusic(item)"></svg-icon>
-            </div>
-          </el-col>
+          <div v-if="getCustomerMusicList.length">
+            <el-col
+              class="flex justify-start items-center overflow-auto"
+              :span="24"
+              v-for="item in getCustomerMusicList"
+              :key="item.id"
+            >
+              <div class="name" @click="playMusic(item)">
+                <span class="text-overflow" :title="item.name">{{ item.name }}</span>
+              </div>
+              <div class="author">
+                <span class="text-overflow" :title="item.ar[0].name">{{
+                  item.hasOwnProperty("ar") ? item.ar[0].name : ""
+                }}</span>
+              </div>
+              <div class="other">
+                <span class="text-overflow" :title="item.alia[0]">{{
+                  item.hasOwnProperty("alia") ? item.alia[0] : ""
+                }}</span>
+              </div>
+              <div class="delete-music">
+                <svg-icon name="delete" width="1rem" @click="customerDeleteMusic(item)"></svg-icon>
+              </div>
+            </el-col>
+          </div>
+
           <div v-else class="empty">空空如也</div>
         </el-row>
       </div>

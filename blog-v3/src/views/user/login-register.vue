@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { reqLogin, reqRegister, getUserInfoById } from "@/api/user";
 import { ElNotification } from "element-plus";
 import { user } from "@/store/index.js";
-import { _getLocalItem, getWelcomeSay } from "@/utils/tool";
+import { getWelcomeSay } from "@/utils/tool";
 
 const userStore = user();
 const route = useRoute();
@@ -19,7 +19,8 @@ const usernameV = (rule, value, cb) => {
   }
   cb();
 };
-const REGEXP_PWD = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,18}$/;
+const REGEXP_PWD =
+  /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){6,18}$/;
 const password1V = (rule, value, cb) => {
   if (!value) {
     return cb(new Error("请输入密码"));
@@ -216,37 +217,90 @@ watch(
 <template>
   <div class="layout">
     <PageHeader />
-    <div class="center_box flex flex-col justify-center items-center">
-      <el-form v-if="route.name == 'Login'" class="login-register-form" ref="loginFormRef" :model="loginForm" :rules="loginRlues" label-width="100px" label-suffix=":">
+    <div class="center_box flex flex-col justify-start items-center">
+      <el-form
+        v-if="route.name == 'Login'"
+        class="login-register-form"
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginRlues"
+        label-width="100px"
+        label-suffix=":"
+      >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="loginForm.username" :style="{ width: '220px' }" placeholder="请输入用户名" clearable @keyup.enter.native="submit" />
+          <el-input
+            v-model="loginForm.username"
+            :style="{ width: '220px' }"
+            placeholder="请输入用户名"
+            clearable
+            @keyup.enter="submit"
+          />
         </el-form-item>
-        <el-form-item label="用户密码" prop="password" @keyup.enter.native="submit">
-          <el-input v-model="loginForm.password" show-password :style="{ width: '220px' }" placeholder="请输入密码" clearable />
+        <el-form-item label="用户密码" prop="password" @keyup.enter="submit">
+          <el-input
+            v-model="loginForm.password"
+            show-password
+            :style="{ width: '220px' }"
+            placeholder="请输入密码"
+            clearable
+          />
         </el-form-item>
         <el-form-item>
           <div class="flex justify-between items-center w-[100%]">
-            <el-button class="login-register-button" type="danger" @click="submit">登录</el-button>
-            <div v-if="route.name == 'Login'" class="no-account">没有账号？<span class="line" @click="goRegister">去注册</span></div>
+            <span class="apply-button" type="danger" @click="submit">登录</span>
+            <div v-if="route.name == 'Login'" class="no-account">
+              没有账号？<span class="line" @click="goRegister">去注册</span>
+            </div>
           </div>
         </el-form-item>
       </el-form>
-      <el-form v-else class="login-register-form" ref="registerFormRef" :model="registerForm" :rules="registerRules" label-width="100px" label-suffix=":">
+      <el-form
+        v-else
+        class="login-register-form"
+        ref="registerFormRef"
+        :model="registerForm"
+        :rules="registerRules"
+        label-width="100px"
+        label-suffix=":"
+      >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="registerForm.username" :style="{ width: '220px' }" placeholder="请输入用户名" clearable />
+          <el-input
+            v-model="registerForm.username"
+            :style="{ width: '220px' }"
+            placeholder="请输入用户名"
+            clearable
+          />
         </el-form-item>
         <el-form-item label="昵称">
-          <el-input v-model="registerForm.nick_name" :style="{ width: '220px' }" placeholder="请输入昵称" clearable />
+          <el-input
+            v-model="registerForm.nick_name"
+            :style="{ width: '220px' }"
+            placeholder="请输入昵称"
+            clearable
+          />
         </el-form-item>
         <el-form-item label="密码" prop="password1">
-          <el-input show-password v-model="registerForm.password1" :style="{ width: '220px' }" placeholder="请输入密码" clearable />
+          <el-input
+            show-password
+            v-model="registerForm.password1"
+            :style="{ width: '220px' }"
+            placeholder="请输入密码"
+            clearable
+          />
         </el-form-item>
         <el-form-item label="确认密码" prop="password2">
-          <el-input show-password v-model="registerForm.password2" :style="{ width: '220px' }" placeholder="确认密码" clearable @keyup.enter.native="submit" />
+          <el-input
+            show-password
+            v-model="registerForm.password2"
+            :style="{ width: '220px' }"
+            placeholder="确认密码"
+            clearable
+            @keyup.enter="submit"
+          />
         </el-form-item>
         <el-form-item>
           <div class="flex justify-between items-center w-[100%]">
-            <el-button class="login-register-button" type="danger" @click="submit">注册</el-button>
+            <span class="apply-button" @click="submit">注册</span>
           </div>
         </el-form-item>
       </el-form>
@@ -256,7 +310,7 @@ watch(
 
 <style lang="scss" scoped>
 .center_box {
-  min-height: 28rem !important;
+  min-height: calc(100vh - 128px);
 }
 .login-register {
   margin: 3.75px;
@@ -272,7 +326,9 @@ watch(
     }
   }
 }
-
+.apply-button {
+  padding: 0 20px;
+}
 .line {
   cursor: pointer;
   text-decoration: underline;
@@ -283,5 +339,8 @@ watch(
 
 :deep(.el-form-item) {
   padding: 15px 0;
+}
+.center_box {
+  min-height: calc(100vh - 128px);
 }
 </style>

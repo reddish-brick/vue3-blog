@@ -7,6 +7,7 @@ import Refresh from "@iconify-icons/ep/refresh";
 import Delete from "@iconify-icons/ep/delete";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Approve from "@iconify-icons/ep/finished";
+import Upload from "@/components/Upload/upload.vue";
 
 const linksFormRef = ref();
 
@@ -96,7 +97,7 @@ const {
         type="primary"
         size="small"
         :icon="useRenderIcon(Approve)"
-        @click="approveBatch"
+        @click="approveBatch('batch')"
         >批量审核</el-button
       >
     </el-space>
@@ -148,6 +149,17 @@ const {
         >
           修改
         </el-button>
+        <el-button
+          v-if="param.status == 1"
+          class="reset-margin"
+          link
+          type="success"
+          size="small"
+          @click="approveBatch('single', row)"
+          :icon="useRenderIcon(Approve)"
+        >
+          通过
+        </el-button>
       </template>
     </pure-table>
     <el-dialog
@@ -187,12 +199,12 @@ const {
             clearable
           />
         </el-form-item>
-        <el-form-item label="网站头像" prop="site_avatar">
-          <el-input
-            v-model="form.site_avatar"
-            :style="{ width: '380px' }"
-            placeholder="请输入网站头像"
-            clearable
+        <el-form-item class="user-avatar" label="网站头像" prop="site_avatar">
+          <Upload
+            v-model:fileList="form.avatarList"
+            :width="80"
+            :height="80"
+            :limit="1"
           />
         </el-form-item>
       </el-form>
@@ -205,3 +217,30 @@ const {
     </el-dialog>
   </el-card>
 </template>
+
+<style lang="scss" scoped>
+.user-avatar {
+  height: 80px;
+  width: 80px;
+  z-index: 999;
+
+  :deep(.el-upload--picture-card) {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 40px !important;
+  }
+
+  :deep(.el-upload-list__item) {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 40px !important;
+    margin: 0;
+  }
+
+  :deep(.el-upload-list--picture-card) {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 40px !important;
+  }
+}
+</style>

@@ -1,49 +1,23 @@
 <!--友链列表  -->
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, h } from "vue";
-import { getFriendLinks, addFriendLinks } from "@/api/links";
-import { ElNotification } from "element-plus";
-import SkeletonItem from "@/components/SkletonItem/skeleton-item.vue";
+import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
+import { getFriendLinks } from "@/api/links";
 
-const urlV = (rule, value, cb) => {
-  const reg = new RegExp(/^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/);
-  if (!value) {
-    return cb(new Error("请输入网站地址"));
-  } else if (value && !reg.test(value)) {
-    return cb(new Error("请输入正确的网站地址"));
-  } else {
-    cb();
-  }
-};
+import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
 
 const active = ref(0);
 const activeType = ref("");
 const loading = ref(false);
 const params = reactive({
   current: 1,
-  size: 12,
+  size: 6,
   status: 2,
 });
-const activeName = ref("");
 
 const linksList = ref([]);
 const total = ref(0);
-const formRef = ref();
-const form = reactive({
-  site_name: "", // 网站名称
-  site_desc: "", // 网站描述
-  url: "", // 网址
-  site_avatar: "", // 网站头像
-});
-const primaryForm = reactive({ ...form });
 let observe;
 let box;
-
-const rules = reactive({
-  site_name: [{ required: true, message: "请输入网站名称", trigger: "blur" }],
-  site_desc: [{ required: true, message: "请输入网站描述", trigger: "blur" }],
-  url: [{ required: true, validator: urlV, trigger: "blur" }],
-});
 
 // 鼠标进入触发
 const mouseEnterItem = (type, index) => {
@@ -78,30 +52,6 @@ const observeBox = () => {
   observe.observe(box);
 };
 
-// 申请友链
-const applayLinks = async () => {
-  await formRef.value.validate(async (valid) => {
-    if (valid) {
-      const res = await addFriendLinks(form);
-      if (res && res.code == 0) {
-        ElNotification({
-          offset: 60,
-          title: "提示",
-          message: h("div", { style: "color: #7ec050; font-weight: 600;" }, "申请成功，等待博主审核通过"),
-        });
-        activeName.value = "";
-        Object.assign(form, primaryForm);
-      } else {
-        ElNotification({
-          offset: 60,
-          title: "错误提示",
-          message: h("div", { style: "color: #f56c6c; font-weight: 600;" }, res.message),
-        });
-      }
-    }
-  });
-};
-
 const returnUrl = (url) => {
   const end = url.substring(url.length - 1);
   return end != "/" ? url + "/favicon.ico" : url + "favicon.ico";
@@ -113,7 +63,8 @@ const pageGetLinksList = async () => {
   }
   const res = await getFriendLinks(params);
   if (res && res.code == 0) {
-    linksList.value = params.current == 1 ? res.result.list : linksList.value.concat(res.result.list);
+    linksList.value =
+      params.current == 1 ? res.result.list : linksList.value.concat(res.result.list);
     total.value = res.result.total - 0;
     loading.value = false;
   }
@@ -135,27 +86,9 @@ onBeforeUnmount(() => {
 <template>
   <PageHeader :loading="loading" />
   <div class="center_box">
-    <el-collapse v-model="activeName" class="apply">
-      <el-collapse-item title="申请友链" name="applay">
-        <el-form class="apply-form" ref="formRef" :model="form" :rules="rules" label-width="100px" label-suffix=":">
-          <el-form-item label="网站名称" prop="site_name">
-            <el-input v-model="form.site_name" :style="{ width: '220px' }" placeholder="请输入网站名称" clearable />
-          </el-form-item>
-          <el-form-item label="网站描述" prop="site_desc">
-            <el-input type="textarea" v-model="form.site_desc" :style="{ width: '220px' }" maxlength="125" resize="none" :autosize="{ minRows: 2, maxRows: 3 }" show-word-limit placeholder="请输入网站描述" clearable />
-          </el-form-item>
-          <el-form-item label="网站地址" prop="url">
-            <el-input v-model="form.url" :style="{ width: '220px' }" placeholder="请输入网站地址" clearable />
-          </el-form-item>
-          <el-form-item label="网站头像" prop="site_avatar">
-            <el-input v-model="form.site_avatar" :style="{ width: '220px' }" placeholder="请输入网站头像" clearable />
-          </el-form-item>
-        </el-form>
-        <div class="pos">
-          <el-button class="apply-button" type="danger" @click="applayLinks">申请</el-button>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+    <div class="w-[100%] !m-[10px] flex justify-center">
+      <span class="apply-button" @click="$router.push('/link/apply')">申请友链</span>
+    </div>
     <el-skeleton :loading="loading" style="height: 100%" animated>
       <template #template>
         <div class="flex justify-start w-[100%] !mt-[10px]" v-for="i in 2" :key="i">
@@ -178,19 +111,47 @@ onBeforeUnmount(() => {
         </div>
       </template>
       <el-row class="site">
-        <el-col :xs="12" :sm="6" v-for="(item, index) in linksList" :key="index">
+        <el-col :xs="24" :sm="8" v-for="(item, index) in linksList" :key="index">
           <el-card class="card-hover">
-            <div class="site-item animate__animated animate__fadeIn" @click="goToSite(item.url)">
-              <div class="left" @mouseenter="mouseEnterItem('site', index)" @mouseleave="mouseLeaveItem">
-                <span :class="['top', activeType == 'site' && active == index ? 'top-animate' : '']"></span>
-                <el-avatar fit="scale-down" :size="60" :src="item.site_avatar || returnUrl(item.url)">
+            <div
+              :style="{
+                backgroundImage: `url(${item.site_avatar})`,
+              }"
+              :class="[
+                'site-item',
+                'animate__animated',
+                'animate__fadeIn',
+                activeType == 'site' && active == index ? 'site-mask' : '',
+              ]"
+              @mouseenter="mouseEnterItem('site', index)"
+              @mouseleave="mouseLeaveItem"
+            >
+              <div class="left">
+                <el-avatar
+                  :class="[activeType == 'site' && active == index ? 'avatar-hover' : 'avatar']"
+                  fit="cover"
+                  :size="80"
+                  :src="item.site_avatar || returnUrl(item.url)"
+                >
                   <span class="avatar-font">{{ item.site_name }}</span></el-avatar
                 >
-                <span :class="['bottom', activeType == 'site' && active == index ? 'bottom-animate' : '']"></span>
               </div>
               <div class="right">
-                <a :title="item.site_name" :href="item.url" target="_blank" class="name">{{ item.site_name }}</a>
-                <span :title="item.site_desc" class="desc"> {{ item.site_desc }}</span>
+                <div class="w-[100%] flex justify-between items-center">
+                  <span :title="item.site_name" class="name">{{ item.site_name }}</span>
+                  <span
+                    class="iconfont icon-link cursor-pointer"
+                    @click="goToSite(item.url)"
+                  ></span>
+                </div>
+
+                <span
+                  :style="{ height: activeType == 'site' && active == index ? '4.6rem' : '0' }"
+                  :title="item.site_desc"
+                  class="desc"
+                >
+                  {{ item.site_desc }}</span
+                >
               </div>
             </div>
           </el-card>
@@ -205,69 +166,41 @@ onBeforeUnmount(() => {
 .site {
   &-item {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     padding: 20px 10px;
     cursor: pointer;
-
+    position: relative;
+    min-height: 11rem;
+    background-position: center;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0.5);
     .left {
-      position: relative;
-      width: 60px;
-      height: 60px;
+      position: absolute;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
       transition: all 0.8s;
 
-      &:hover {
-        transform: scale(1.1);
+      .avatar-hover {
+        animation: avatarHover 0.8s forwards;
       }
 
-      .top {
-        content: "";
-        position: absolute;
-        top: -3px;
-        left: -3px;
-        width: 66px;
-        height: 33px;
-        border-top-left-radius: 33px;
-        border-top-right-radius: 33px;
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      .top-animate {
-        animation-name: up;
-        animation-duration: 0.8s;
-        animation-fill-mode: forwards;
-      }
-
-      .bottom {
-        content: "";
-        position: absolute;
-        bottom: -3px;
-        left: -3px;
-        width: 66px;
-        height: 33px;
-        border-bottom-left-radius: 33px;
-        border-bottom-right-radius: 33px;
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      .bottom-animate {
-        animation-name: down;
-        animation-duration: 0.8s;
-        animation-fill-mode: forwards;
+      .avatar {
+        animation: avatar 0.8s forwards;
       }
     }
 
     .right {
-      width: 70%;
-      margin-left: 10px;
+      width: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: flex-end;
       align-items: flex-start;
+      z-index: 2;
 
       .name {
-        width: 90%;
-        font-size: 1.2rem;
-        font-weight: 600;
+        font-size: 1.8rem;
+        font-weight: bold;
         line-height: 1.7;
         color: var(--font-color);
         white-space: nowrap;
@@ -280,38 +213,61 @@ onBeforeUnmount(() => {
         }
       }
 
+      .icon-link {
+        font-size: 18px;
+        font-weight: 600;
+        color: #9d269d;
+        &:hover {
+          color: var(--primary);
+        }
+      }
+
       .desc {
+        transition: all 0.8s;
         display: -webkit-box;
-        width: 90%;
-        height: 2.4rem;
+        width: 100%;
+        font-weight: bold;
+        height: 4.6rem;
         color: var(--font-color);
-        font-size: 0.8rem;
+        line-height: 1.2;
+        font-size: 1.3rem;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
         -webkit-box-orient: vertical;
       }
     }
   }
 }
+.site-mask::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+}
 
-.apply {
-  margin: 3.75px;
-  .pos {
-    padding: 0.5rem 0 0 10rem;
+@keyframes avatarHover {
+  0% {
+    transform: translateY(0);
   }
 
-  &-button {
-    height: 24px;
-    padding: 0 30px;
-    background-color: var(--border-color);
-    border: none;
-    transition: all 0.5s;
-    &:hover {
-      background-color: var(--primary);
-    }
+  100% {
+    transform: translateY(-100px);
+  }
+}
+
+@keyframes avatar {
+  0% {
+    transform: translateY(-100px);
+  }
+
+  100% {
+    transform: translateY(0);
   }
 }
 
@@ -323,34 +279,17 @@ onBeforeUnmount(() => {
   letter-spacing: 1px;
 }
 
-@keyframes up {
-  0% {
-    transform: translateY(0px);
-  }
-
-  100% {
-    transform: translateY(-33px);
-    background: rgba(255, 255, 255, 0);
-  }
-}
-
-@keyframes down {
-  0% {
-    transform: translateY(0px);
-  }
-
-  100% {
-    transform: translateY(33px);
-    background: rgba(255, 255, 255, 0);
-  }
-}
-
 :deep(.el-avatar) {
   color: var(--font-color);
-  background: linear-gradient(90deg, #dfd2d2 1%, #ead2ea 10.2%, #e4d5ee 19.6%, #d1def3 36.8%, #b5dee5 62.2%, #cfebf3 88.9%, #dde7ea 99%) !important;
-}
-
-:deep(.el-form-item) {
-  padding: 10px 0;
+  background: linear-gradient(
+    90deg,
+    #dfd2d2 1%,
+    #ead2ea 10.2%,
+    #e4d5ee 19.6%,
+    #d1def3 36.8%,
+    #b5dee5 62.2%,
+    #cfebf3 88.9%,
+    #dde7ea 99%
+  ) !important;
 }
 </style>

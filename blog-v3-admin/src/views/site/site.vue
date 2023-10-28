@@ -5,42 +5,51 @@ import Upload from "@/components/Upload/upload.vue";
 
 const siteInfoFormRef = ref();
 
-const { siteInfoForm, siteInfoRules, isEditSiteInfo, edit, save, cancel } =
-  useSite();
+const {
+  loading,
+  siteInfoForm,
+  siteInfoRules,
+  isEditSiteInfo,
+  edit,
+  save,
+  cancel
+} = useSite();
 </script>
 
 <template>
-  <div class="flex_row">
-    <el-card class="site-card">
-      <template #header>
-        <div class="header">
-          博客信息管理
-          <div v-if="isEditSiteInfo">
-            <el-button
-              type="info"
-              plain
-              @click="cancel('site', siteInfoFormRef)"
-              >取消</el-button
-            >
-            <el-button
-              plain
-              type="danger"
-              @click="save('site', siteInfoFormRef)"
-              >保存</el-button
+  <el-form
+    label-width="80"
+    ref="siteInfoFormRef"
+    :model="siteInfoForm"
+    :rules="siteInfoRules"
+  >
+    <div class="site-layout">
+      <el-card class="site-card">
+        <template #header>
+          <div class="header">
+            博客信息管理
+            <div v-if="isEditSiteInfo">
+              <el-button
+                type="info"
+                plain
+                @click="cancel('site', siteInfoFormRef)"
+                >取消</el-button
+              >
+              <el-button
+                plain
+                type="danger"
+                :disabled="loading"
+                :loading="loading"
+                @click="save('site', siteInfoFormRef)"
+                >保存</el-button
+              >
+            </div>
+            <el-button v-else type="primary" plain @click="edit('site')"
+              >编辑</el-button
             >
           </div>
-          <el-button v-else type="primary" plain @click="edit('site')"
-            >编辑</el-button
-          >
-        </div>
-      </template>
-      <el-form
-        label-width="80"
-        ref="siteInfoFormRef"
-        :model="siteInfoForm"
-        :rules="siteInfoRules"
-        class="site-info-form"
-      >
+        </template>
+
         <el-form-item class="avatar-form" prop="blog_avatar">
           <div class="bg-upload">
             <Upload
@@ -95,24 +104,6 @@ const { siteInfoForm, siteInfoRules, isEditSiteInfo, edit, save, cancel } =
           />
           <span v-else>{{ siteInfoForm.git_ee_link || "暂无gitee" }}</span>
         </el-form-item>
-        <el-form-item class="link-cover" label="企鹅">
-          <Upload
-            v-model:fileList="siteInfoForm.qqCoverList"
-            :width="80"
-            :height="80"
-            :preview="!isEditSiteInfo"
-            :limit="1"
-          />
-        </el-form-item>
-        <el-form-item class="link-cover" label="微信">
-          <Upload
-            v-model:fileList="siteInfoForm.weChatCoverList"
-            :width="80"
-            :height="80"
-            :preview="!isEditSiteInfo"
-            :limit="1"
-          />
-        </el-form-item>
         <el-form-item label="B站">
           <el-input
             v-if="isEditSiteInfo"
@@ -133,6 +124,62 @@ const { siteInfoForm, siteInfoRules, isEditSiteInfo, edit, save, cancel } =
           />
           <span v-else>{{ siteInfoForm.github_link || "暂无github" }}</span>
         </el-form-item>
+      </el-card>
+      <el-card class="site-card">
+        <el-form-item class="link-cover" label="企鹅">
+          <Upload
+            v-model:fileList="siteInfoForm.qqCoverList"
+            :width="80"
+            :height="80"
+            :preview="!isEditSiteInfo"
+            :limit="1"
+          />
+        </el-form-item>
+        <el-form-item class="link-cover" label="微信">
+          <Upload
+            v-model:fileList="siteInfoForm.weChatCoverList"
+            :width="80"
+            :height="80"
+            :preview="!isEditSiteInfo"
+            :limit="1"
+          />
+        </el-form-item>
+        <el-form-item class="link-cover" label="企鹅群组">
+          <Upload
+            v-model:fileList="siteInfoForm.qqGroupList"
+            :width="80"
+            :height="80"
+            :preview="!isEditSiteInfo"
+            :limit="1"
+          />
+        </el-form-item>
+        <el-form-item class="link-cover" label="微信群组">
+          <Upload
+            v-model:fileList="siteInfoForm.weChatGroupList"
+            :width="80"
+            :height="80"
+            :preview="!isEditSiteInfo"
+            :limit="1"
+          />
+        </el-form-item>
+        <el-form-item class="link-cover" label="绿宝宝">
+          <Upload
+            v-model:fileList="siteInfoForm.weChatPayGroupList"
+            :width="80"
+            :height="80"
+            :preview="!isEditSiteInfo"
+            :limit="1"
+          />
+        </el-form-item>
+        <el-form-item class="link-cover" label="蓝宝宝">
+          <Upload
+            v-model:fileList="siteInfoForm.aliPayGroupList"
+            :width="80"
+            :height="80"
+            :preview="!isEditSiteInfo"
+            :limit="1"
+          />
+        </el-form-item>
         <el-form-item label="博客公告">
           <el-input
             v-if="isEditSiteInfo"
@@ -146,9 +193,9 @@ const { siteInfoForm, siteInfoRules, isEditSiteInfo, edit, save, cancel } =
           />
           <span v-else>{{ siteInfoForm.blog_notice || "暂无公告" }}</span>
         </el-form-item>
-      </el-form>
-    </el-card>
-  </div>
+      </el-card>
+    </div>
+  </el-form>
 </template>
 
 <style lang="scss" scoped>
@@ -168,12 +215,12 @@ const { siteInfoForm, siteInfoRules, isEditSiteInfo, edit, save, cancel } =
   height: 82vh;
   position: relative;
 
-  .site-info-form {
+  :deep(.el-card__body) {
     height: 100%;
     overflow: auto;
   }
 
-  .site-info-form::-webkit-scrollbar {
+  :deep(.el-card__body::-webkit-scrollbar) {
     display: none;
     /* Chrome Safari */
   }
@@ -280,12 +327,23 @@ const { siteInfoForm, siteInfoRules, isEditSiteInfo, edit, save, cancel } =
 }
 
 @media screen and (max-width: 798px) {
+  .site-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
   .site-card {
     width: 100%;
   }
 }
 
 @media screen and (min-width: 798px) {
+  .site-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
   .site-card {
     width: 48%;
   }

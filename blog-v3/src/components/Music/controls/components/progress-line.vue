@@ -5,18 +5,15 @@
 -->
 <script setup>
 import { ref, watch, defineComponent } from "vue";
+
 import { music } from "@/store/index";
 import { storeToRefs } from "pinia";
 
-const musicStore = music();
-const { getShowLyricBoard, getCurrentMusicId } = storeToRefs(musicStore);
+const { getShowLyricBoard, getMusicInfo } = storeToRefs(music());
 
 defineComponent({
   name: "ProgressLine",
 });
-
-// 暴露出进度变化事件
-const emits = defineEmits(["scheduleChange"]);
 
 const props = defineProps({
   schedule: {
@@ -29,14 +26,14 @@ const props = defineProps({
 const currentSchedule = ref(0);
 
 const handleChange = () => {
-  // 修改pina里的当前播放进度 统一状态管理
-  musicStore.setCurrentSchedule(currentSchedule.value);
-  // 通知父组件 当前播放进度改变了
-  emits("scheduleChange");
+  // 先打断自动设置播放进度
+  music().setIsUseProgress(true);
+  // 修改pina里的当前播放进度
+  music().setCurrentTime(currentSchedule.value);
 };
 
 const toggleLyricBoard = (val) => {
-  musicStore.setShowLyricBoard(val);
+  music().setShowLyricBoard(val); // 是否展示歌词板
 };
 
 watch(
@@ -52,12 +49,20 @@ watch(
 
 <template>
   <div ref="musicRef" class="music-line">
-    <div v-if="getCurrentMusicId">
-      <div v-if="getShowLyricBoard" @click="toggleLyricBoard(false)" class="lyric lyric-down flex flex-col justify-center items-center">
+    <div v-if="getMusicInfo.id">
+      <div
+        v-if="getShowLyricBoard"
+        @click="toggleLyricBoard(false)"
+        class="lyric lyric-down flex flex-col justify-center items-center"
+      >
         <i class="iconfont icon-arrowdown"></i>
         <i class="iconfont icon-arrowdown !mt-[-18px]"></i>
       </div>
-      <div v-else @click="toggleLyricBoard(true)" class="lyric lyric-up flex flex-col justify-center items-center">
+      <div
+        v-else
+        @click="toggleLyricBoard(true)"
+        class="lyric lyric-up flex flex-col justify-center items-center"
+      >
         <i class="iconfont icon-arrowup"></i>
         <i class="iconfont icon-arrowup !mt-[-18px]"></i>
       </div>
@@ -117,7 +122,7 @@ watch(
 :deep(.el-slider__button) {
   width: 8px;
   height: 8px;
-  border: solid 2px #62bf82;
+  border: solid 5px #62bf82;
 }
 
 :deep(.el-slider.is-vertical .el-slider__runway) {

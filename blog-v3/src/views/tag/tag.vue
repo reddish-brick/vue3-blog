@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getAllTag } from "@/api/tag";
 
+import GsapCount from "@/components/GsapCount/index";
+
 const router = useRouter();
 const tagList = ref([]);
 const total = ref(0);
@@ -48,11 +50,17 @@ onMounted(() => {
     <el-row class="center_box">
       <el-col :span="24">
         <el-card class="tag-card">
-          <div class="tag-total flex_center">标签 - {{ total }}</div>
+          <div class="tag-total flex_center">标签 - <GsapCount :value="total" /></div>
           <el-skeleton v-if="loading" class="tag-item" :loading="loading" :rows="1" animated />
           <el-row v-else>
             <el-col :span="24" class="tag-item">
-              <span v-for="(item, i) in tagList" :style="{ fontSize: item.fontSize + 'rem', color: item.fontColor }" class="tag-item__label scale animate__animated animate__fadeInDown" @click="goToArticleList(item)">
+              <span
+                v-for="(item, i) in tagList"
+                :key="i"
+                :style="{ fontSize: item.fontSize + 'rem', color: item.fontColor }"
+                class="tag-item__label scale animate__animated animate__fadeInDown"
+                @click="goToArticleList(item)"
+              >
                 {{ item.tag_name }}
               </span>
             </el-col>

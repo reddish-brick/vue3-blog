@@ -1,14 +1,20 @@
 <script setup>
 import { reactive, ref, watch, h } from "vue";
-import { frontGetParentComment, applyComment, thumbUpComment, cancelThumbUp, deleteComment } from "@/api/comment";
+import {
+  frontGetParentComment,
+  applyComment,
+  thumbUpComment,
+  cancelThumbUp,
+  deleteComment,
+} from "@/api/comment";
 import TextOverflow from "@/components/TextOverflow/index.vue";
 import ChildrenItem from "./ChildrenItem.vue";
 import Loading from "@/components/Loading/Loading.vue";
 import { user } from "@/store/index";
 import { ElMessageBox, ElNotification } from "element-plus";
-import { containHTML } from "@/utils/tool";
 import { getCurrentType } from "../tool";
 import { addLike, cancelLike } from "@/api/like";
+import { containHTML } from "@/utils/tool";
 
 const userStore = user();
 
@@ -129,7 +135,7 @@ const changeShowApplyInput = (val, index) => {
 
 // 关闭打开的输入框
 const closeComment = () => {
-  if (commentList.length) {
+  if (commentList.value.length) {
     childrenRef.value.forEach((v) => {
       v.closeComment();
     });
@@ -240,42 +246,88 @@ defineExpose({
 
 <template>
   <div class="comment">
-    <div class="!mt-[0.5rem] animate__animated animate__fadeIn" v-if="commentList.length" v-for="(comment, index) in commentList" :key="index">
-      <div class="flex justify-start items-start">
-        <div class="avatar-box">
-          <el-avatar class="avatar" :src="comment.from_avatar">{{ comment.from_name }}</el-avatar>
-        </div>
-        <div class="right flex-1">
-          <div class="cursor-pointer">
-            {{ comment.from_name }}
-            <span v-if="comment.from_id == 1" class="up">UP</span>
+    <template v-if="commentList.length">
+      <div
+        class="!mt-[0.5rem] animate__animated animate__fadeIn"
+        v-for="(comment, index) in commentList"
+        :key="index"
+      >
+        <div class="flex justify-start items-start">
+          <div class="avatar-box">
+            <el-avatar class="avatar" :src="comment.from_avatar">{{ comment.from_name }}</el-avatar>
           </div>
-          <div class="!mt-[1rem]">
-            <TextOverflow v-if="!containHTML(comment.content)" class="content" :text="comment.content" :width="199" :maxLines="2" :font-size="13">
-              <template v-slot:default="{ clickToggle, expanded }">
-                <span @click="clickToggle" class="btn">
-                  {{ expanded ? "收起" : "展开" }}
-                </span>
-              </template>
-            </TextOverflow>
-            <span v-else v-html="comment.content"></span>
+          <div class="right flex-1">
+            <div class="cursor-pointer">
+              {{ comment.from_name }}
+              <span v-if="comment.from_id == 1" class="up">UP</span>
+            </div>
+            <div class="!mt-[1rem]">
+              <span v-if="containHTML(comment.content)" v-html="comment.content"></span>
+              <TextOverflow
+                v-else
+                class="content"
+                :text="comment.content"
+                :width="199"
+                :maxLines="2"
+                :font-size="16"
+              >
+                <template v-slot:default="{ clickToggle, expanded }">
+                  <span @click="clickToggle" class="btn">
+                    {{ expanded ? "收起" : "展开" }}
+                  </span>
+                </template>
+              </TextOverflow>
+            </div>
+            <div class="!mt-[0.5rem]">
+              <span class="!mr-[1rem] ip">{{ `IP: ${comment.ipAddress}` }}</span>
+              <span
+                :class="[
+                  'thumbs',
+                  '!mr-[1rem]',
+                  'iconfont',
+                  'icon-icon1',
+                  comment.is_like ? 'like-active' : '',
+                ]"
+                @click="like(comment, index)"
+              >
+                <span class="!ml-[0.5rem]">{{ comment.thumbs_up }}</span>
+              </span>
+              <span
+                v-if="!comment.showApplyInput"
+                class="!mr-[1rem] apply cursor-pointer"
+                @click="apply(comment, index)"
+                >回复</span
+              >
+              <span v-else class="!mr-[1rem] close cursor-pointer" @click="close(index)">关闭</span>
+              <span
+                class="!mr-[1rem] delete cursor-pointer"
+                v-if="
+                  userStore.getUserInfo.id == comment.from_id || userStore.getUserInfo.role == 1
+                "
+                @click="deleteOwnComment(comment.id)"
+                >删除</span
+              >
+            </div>
+            <div class="!mt-[0.5rem]">{{ comment.createdAt }}</div>
+            <ChildrenItem
+              class="!mt-[1.5rem]"
+              ref="childrenRef"
+              :type="props.type"
+              :id="id"
+              :parent_id="comment.id"
+              :author-id="authorId"
+              @parentApply="publish"
+              @changeShowApplyInput="(val) => changeShowApplyInput(val, index)"
+            />
           </div>
-          <div class="!mt-[0.5rem]">
-            <span class="!mr-[1rem] ip">{{ `IP: ${comment.ipAddress}` }}</span>
-            <span :class="['thumbs', '!mr-[1rem]', 'iconfont', 'icon-icon1', comment.is_like ? 'like-active' : '']" @click="like(comment, index)">
-              <span class="!ml-[0.5rem]">{{ comment.thumbs_up }}</span>
-            </span>
-            <span v-if="!comment.showApplyInput" class="!mr-[1rem] apply cursor-pointer" @click="apply(comment, index)">回复</span>
-            <span v-else class="!mr-[1rem] close cursor-pointer" @click="close(index)">关闭</span>
-            <span class="!mr-[1rem] delete cursor-pointer" v-if="userStore.getUserInfo.id == comment.from_id || userStore.getUserInfo.role == 1" @click="deleteOwnComment(comment.id)">删除</span>
-          </div>
-          <div class="!mt-[0.5rem]">{{ comment.createdAt }}</div>
-          <ChildrenItem class="!mt-[1.5rem]" ref="childrenRef" :type="props.type" :id="id" :parent_id="comment.id" :author-id="authorId" @parentApply="publish" @changeShowApplyInput="(val) => changeShowApplyInput(val, index)" />
         </div>
       </div>
-    </div>
+    </template>
+
     <Loading :size="32" v-if="params.loading" />
-    <div v-else-if="commentTotal > commentList.length" class="show-more" @click="showMore">展开更多</div>
+    <div v-else-if="commentTotal > commentList.length" class="show-more" @click="showMore">
+      展开更多
+    </div>
     <div v-else class="h-[48px]"></div>
   </div>
 </template>

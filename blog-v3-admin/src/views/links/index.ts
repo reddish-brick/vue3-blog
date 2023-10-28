@@ -2,6 +2,8 @@ import { ref, reactive, onMounted } from "vue";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import { useStaticStoreHook } from "@/store/modules/static";
+import { ElLoading } from "element-plus";
+import { imgUpload } from "@/api/site";
 
 import {
   getLinksList,
@@ -10,19 +12,6 @@ import {
   deleteLinks
 } from "@/api/links";
 import { ElMessageBox } from "element-plus";
-
-const urlV = (rule, value, cb) => {
-  const reg = new RegExp(
-    /^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/
-  );
-  if (!value) {
-    return cb(new Error("请输入网站地址"));
-  } else if (value && !reg.test(value)) {
-    return cb(new Error("请输入正确的网站地址"));
-  } else {
-    cb();
-  }
-};
 
 export function useColumns() {
   const param = reactive<any>({
@@ -91,13 +80,14 @@ export function useColumns() {
     site_name: "",
     site_desc: "",
     url: "",
-    site_avatar: ""
+    site_avatar: "",
+    avatarList: []
   });
   const primaryForm = reactive({ ...form });
   const rules = reactive({
     site_name: [{ required: true, message: "请输入网站名称", trigger: "blur" }],
     site_desc: [{ required: true, message: "请输入网站描述", trigger: "blur" }],
-    url: [{ required: true, validator: urlV, trigger: "blur" }]
+    url: [{ required: true, message: "请输入网站地址", trigger: "blur" }]
   });
 
   /** 分页配置 */
@@ -163,23 +153,41 @@ export function useColumns() {
   }
 
   // 批量审核友链
-  function approveBatch() {
-    if (selectList.value.length) {
-      ElMessageBox.confirm("确认审核通过？", "提示", {
-        confirmButtonText: "确认",
-        cancelButtonText: "取消"
-      }).then(async () => {
-        const list = selectList.value.map(se => se.id);
-        const res = await approveLinks({ idList: list });
-        if (res.code == 0) {
-          message(`批量审核友链成功`, { type: "success" });
-          getPageLinksList();
-        } else {
-          message(res.message, { type: "error" });
-        }
-      });
-    } else {
-      message("请先选择友链", { type: "warning" });
+  function approveBatch(type = "batch", row?) {
+    if (type == "single") {
+      if (row.id) {
+        ElMessageBox.confirm("确认审核通过？", "提示", {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消"
+        }).then(async () => {
+          const list = [row.id];
+          const res = await approveLinks({ idList: list });
+          if (res.code == 0) {
+            message(`审核友链成功`, { type: "success" });
+            getPageLinksList();
+          } else {
+            message(res.message, { type: "error" });
+          }
+        });
+      }
+    } else if (type == "batch") {
+      if (selectList.value.length) {
+        ElMessageBox.confirm("确认审核通过？", "提示", {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消"
+        }).then(async () => {
+          const list = selectList.value.map(se => se.id);
+          const res = await approveLinks({ idList: list });
+          if (res.code == 0) {
+            message(`批量审核友链成功`, { type: "success" });
+            getPageLinksList();
+          } else {
+            message(res.message, { type: "error" });
+          }
+        });
+      } else {
+        message("请先选择友链", { type: "warning" });
+      }
     }
   }
 
@@ -211,6 +219,14 @@ export function useColumns() {
 
   const editLinks = row => {
     Object.assign(form, row);
+    if (row.site_avatar) {
+      form.avatarList = [
+        {
+          id: 1,
+          url: row.site_avatar
+        }
+      ];
+    }
     dialogVisible.value = true;
   };
 
@@ -218,6 +234,24 @@ export function useColumns() {
     if (!formEl) return;
     await formEl.validate(async valid => {
       if (valid) {
+        if (form.avatarList.length) {
+          if (!form.avatarList[0].id) {
+            const upLoadLoading = ElLoading.service({
+              fullscreen: true,
+              text: "图片上传中"
+            });
+            const res = await imgUpload(form.avatarList[0]);
+            if (res.code == 0) {
+              const { url } = res.result;
+              form.site_avatar = url;
+            }
+            upLoadLoading.close();
+          } else {
+            form.site_avatar = form.avatarList[0].url;
+          }
+        } else {
+          form.site_avatar = "";
+        }
         const res = await addOrUpdateLinks(form);
         if (res.code == 0) {
           message("修改成功", { type: "success" });

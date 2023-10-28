@@ -1,8 +1,8 @@
 import http from "@/config/request";
-import { compressAccurately } from "image-conversion";
 import { user } from "@/store/index.js";
 import { h } from "vue";
 import { ElNotification } from "element-plus";
+import imageCompression from "browser-image-compression";
 
 /** 登录 */
 export const reqLogin = (data) => {
@@ -80,7 +80,7 @@ export const imgUpload = async (data) => {
         config: {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: userStore.getToken,
+            "Authorization": userStore.getToken,
           },
         },
       })
@@ -93,8 +93,8 @@ export const imgUpload = async (data) => {
 // 图片压缩
 export const conversion = (file) => {
   return new Promise((resolve) => {
-    compressAccurately(file, 800).then((res) => {
-      // The res in the promise is a compressed Blob type (which can be treated as a File type) file;
+    // https://www.npmjs.com/package/browser-image-compression?activeTab=readme
+    imageCompression(file, { maxSizeMB: 0.8 }).then((res) => {
       resolve(res);
     });
   });

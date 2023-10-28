@@ -4,8 +4,6 @@
   </a>
 </p>
 
-
-
 <p align="center">
   <img src="https://img.shields.io/badge/npm-v6.14.17-blue" alt="pnpm version">
   <a href="https://nodejs.org/en/about/releases/">
@@ -28,31 +26,27 @@
   </a>
 </p>
 
-
-
-
-
 ## ⚡ 简介 introduction
 
 一个前后端分离的个人博客项目 - 后端
 
 已适配移动端、PC端
 
-#### 前台：
+#### 前台
 
 博客前台基于vue3、element plus、pinia、axios、vue-router、vue-cli、vue-use、npm、scss等主流技术
 
-前台线上预览地址：http://mrzym.top
+前台线上预览地址：<http://mrzym.top>
 
-gitee仓库地址：https://gitee.com/mrzym/blog-v3
+gitee仓库地址：<https://gitee.com/mrzym/blog-v3>
 
-#### 管理后台：
+#### 管理后台
 
 博客管理后台基于pureadmin、vue3、element plus、pinia、axios、vue-router、vue-use、pnpm、vite、sass、tailwindcss等主流技术
 
-后台线上预览地址：http://mrzym.top/admin
+后台线上预览地址：<http://mrzym.top/admin>
 
-gitee仓库地址： https://gitee.com/mrzym/blog-v3-admin
+gitee仓库地址： <https://gitee.com/mrzym/blog-v3-admin>
 
 测试账户: test
 
@@ -60,11 +54,11 @@ gitee仓库地址： https://gitee.com/mrzym/blog-v3-admin
 
 也可以自行注册用户
 
-#### 后端：
+#### 后端
 
 博客后端基于node.js、koa、koa-router、koa-body、seqlize、mysql、qiniu(七牛云对象存储)、bcryptjs、nodemon等主流技术
 
-gitee仓库地址：https://gitee.com/mrzym/blogServer
+gitee仓库地址：<https://gitee.com/mrzym/blogServer>
 
 ## 🚀 博客后端下载运行
 
@@ -90,16 +84,14 @@ npm run serve
 tips：.env文件下可以配置项目的上传文件方式，local为本地上传，qiniu为上传到七牛云存储,online为上传到自己的云服务器，使用其他的对象存储（七牛云、阿里云）是因为自己的服务器带宽不够，下载资源很慢，自己也可以先试一试online上传到自己的服务器，然后有经验了再去试一试七牛云。
 ```
 
-
 ## 🌈部署
 
 博客的部署教程
 
-教程地址：http://mrzym.top/#/articleList?id=2&type=category&name=%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2
+教程地址：<http://mrzym.top/#/articleList?id=2&type=category&name=%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2>
 
 ## 🥰感谢
 
 感谢我所使用的这些技术框架的开发者、维护者，每一个框架、库的开发，都需要长时间的技术沉淀，充分的思考与不断地踩坑。维护开源库所需要花费的时间和精力更是常人所难以想象的。
 
 如果大家喜欢这个项目的话，麻烦大家点个star、fork，你们的鼓励是我最大的动力。
-

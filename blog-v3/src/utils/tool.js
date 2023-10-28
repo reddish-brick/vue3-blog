@@ -141,16 +141,20 @@ export function deepClone(source) {
 
 export function isMobile() {
   // 手机端
-  let reg = /(phone|pad|iPhone|iPod|ios|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i;
+  let reg =
+    /(phone|pad|iPhone|iPod|ios|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i;
   return reg.test(navigator.userAgent);
 }
 
 export function randomFontColor() {
-  return `rgb(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)})`;
+  return `rgb(${Math.round(Math.random() * 255)},${Math.round(Math.random() * 255)},${Math.round(
+    Math.random() * 255
+  )})`;
 }
 
 // 给一些数字转成k w
 export function numberFormate(number) {
+  if (!number) return 0;
   number = typeof number == "number" ? number : parseFloat(number);
   let res;
   if (number >= 10000) {
@@ -216,16 +220,19 @@ export function debounce(fn, delay) {
 
 export function containHTML(text) {
   const reg = /<[^>]+>/g;
-  return reg.test(text);
+
+  const badJs = /script|alert|window|prompt|location|href|iframe|onload|onerror/g;
+  return reg.test(text) && !badJs.test(text);
 }
 
 export function filterMessage(text) {
-  return text.replace(/&gt;/g, ">").replace(/&lt;/g, "<")
+  return text.replace(/&gt;/g, ">").replace(/&lt;/g, "<");
 }
 
 // 返回时间 几天前。。。
 export const returnTime = (time) => {
-  if (!time) return
+  if (!time) return;
+  // eslint-disable-next-line
   time = time.replace(/\-/g, "/"); // 解决ios系统上格式化时间出现NAN的bug
   let times = new Date().getTime() - new Date(time).getTime();
   let res;

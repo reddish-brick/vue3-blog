@@ -2,18 +2,16 @@
 import { defineComponent, h, ref, reactive } from "vue";
 
 import { music } from "@/store/index";
-import { PLAYTYPE } from "../../music";
+import { PLAYTYPE } from "../../musicTool";
 import { ElNotification } from "element-plus";
 import { reqSearch, reqSearchSingerHot } from "@/api/music";
 import { storeToRefs } from "pinia";
-
-const musicStore = music();
 
 defineComponent({
   name: "CustomMusicList",
 });
 
-const { getCustomerMusicList } = storeToRefs(musicStore);
+const { getCustomerMusicList } = storeToRefs(music());
 const keyWords = ref(""); // 搜索关键词
 const searchList = ref([]); // 搜索列表
 const singer = ref("");
@@ -25,11 +23,10 @@ const params = reactive({
 });
 
 const playMusic = (item) => {
-  // 设置当前播放音乐的id
-  musicStore.setCurrentMusicId(item.id);
+  // 设置当前播放音乐
+  music().setMusicInfo(item.id, false, item);
   // 设置播放音乐的详细描述
-  musicStore.setCurrentMusicDesc(item);
-  musicStore.setPlayType(PLAYTYPE.CUSTOM);
+  music().setPlayType(PLAYTYPE.CUSTOM);
 };
 
 // 判断当前歌曲是否在用户定制列表中
@@ -47,8 +44,8 @@ const isActive = (id) => {
 // 添加歌曲
 const customerAddMusic = (item) => {
   if (isActive(item.id)) return;
-  musicStore.setCustomerMusicList("add", item);
-  musicStore.setPlayType(PLAYTYPE.CUSTOM);
+  music().setCustomerMusicList("add", item);
+  music().setPlayType(PLAYTYPE.CUSTOM);
 
   searchList.value.forEach((song) => {
     song.active = isActive(song.id);
@@ -101,8 +98,17 @@ const searchSingerSongs = async (type) => {
     <div class="flex justify-center items-start">
       <div class="!py-[10px] search-music-list__detail">
         <div class="search">
-          <el-input style="width: 180px" v-model="keyWords" @keyup.enter.native="search" clearable></el-input>
-          <el-button style="background-color: #62c28a; margin-left: 10px; color: #676767" @click="search">搜索</el-button>
+          <el-input
+            style="width: 180px"
+            v-model="keyWords"
+            @keyup.enter="search"
+            clearable
+          ></el-input>
+          <el-button
+            style="background-color: #62c28a; margin-left: 10px; color: #676767"
+            @click="search"
+            >搜索</el-button
+          >
         </div>
         <el-row>
           <el-col :span="24" class="header">
@@ -112,7 +118,12 @@ const searchSingerSongs = async (type) => {
           </el-col>
         </el-row>
         <el-row v-if="searchList.length" class="body">
-          <el-col class="flex justify-start items-center overflow-auto" :span="24" v-for="item in searchList" :key="item.id">
+          <el-col
+            class="flex justify-start items-center overflow-auto"
+            :span="24"
+            v-for="item in searchList"
+            :key="item.id"
+          >
             <div class="name" @click="playMusic(item)">
               <span class="text-overflow" :title="item.name">{{ item.name }}</span>
             </div>
@@ -123,10 +134,20 @@ const searchSingerSongs = async (type) => {
               <span class="text-overflow" :title="item.awardName">{{ item.awardName }}</span>
             </div>
             <div class="add">
-              <i :class="['iconfont', 'icon-tianjiadao', 'change-color', item.active ? 'active' : '']" @click="customerAddMusic(item)"></i>
+              <i
+                :class="[
+                  'iconfont',
+                  'icon-tianjiadao',
+                  'change-color',
+                  item.active ? 'active' : '',
+                ]"
+                @click="customerAddMusic(item)"
+              ></i>
             </div>
           </el-col>
-          <div class="observe" @click="searchSingerSongs('loadMore')">{{ params.loadMore ? "加载更多" : "已经到底了" }}</div>
+          <div class="observe" @click="searchSingerSongs('loadMore')">
+            {{ params.loadMore ? "加载更多" : "已经到底了" }}
+          </div>
         </el-row>
         <div v-else class="empty">空空如也</div>
       </div>

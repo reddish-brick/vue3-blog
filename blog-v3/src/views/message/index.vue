@@ -1,15 +1,32 @@
-<script setup>
-import { ref, reactive, onMounted, onBeforeUnmount, h } from "vue";
+<script setup name="Message">
+import { ref, reactive, onMounted, onBeforeUnmount, h, onActivated, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { Edit, Delete, Search } from "@element-plus/icons-vue";
-import TypeWriter from "@/components/TypeWriter/type-writer";
+import { ElNotification, ElMessageBox } from "element-plus";
 
-import { getMessageList, likeMessage, cancelLikeMessage, deleteMessage, getMessageTag } from "@/api/message";
+import TypeWriter from "@/components/TypeWriter/type-writer";
+import { gsapTransXScale } from "@/utils/transform";
+
+import {
+  getMessageList,
+  likeMessage,
+  cancelLikeMessage,
+  deleteMessage,
+  getMessageTag,
+} from "@/api/message";
+
 import { addLike, cancelLike } from "@/api/like";
 import svgIcon from "@/components/SvgIcon/index.vue";
-import { returnTime, _setLocalItem, containHTML, filterMessage } from "@/utils/tool";
+import {
+  returnTime,
+  _setLocalItem,
+  containHTML,
+  filterMessage,
+  _getLocalItem,
+  _removeLocalItem,
+} from "@/utils/tool";
 import { user } from "@/store/index";
 
 const router = useRouter();
@@ -22,10 +39,12 @@ let observe;
 let box;
 const param = reactive({
   current: 1,
-  size: 10,
+  size: 4,
   tag: "",
+  message: "",
   user_id: getUserInfo.value.id,
 });
+const primaryParam = reactive({ ...param });
 const activeTab = ref(0);
 const tabList = ref([]);
 const showSearch = ref(false);
@@ -68,7 +87,12 @@ const pageGetMessageList = async () => {
   }
   let res = await getMessageList(param);
   if (res.code == 0) {
-    messageList.value = param.current == 1 ? res.result.list : messageList.value.concat(res.result.list);
+    const { list } = res.result;
+    messageList.value =
+      param.current == 1 ? res.result.list : messageList.value.concat(res.result.list);
+    let classList = res.result.list.map((item, index) => {
+      return ".message" + (messageList.value.length - list.length + index);
+    });
     total.value = res.result.total;
     if (messageList.value.length < total.value) {
       observeBox();
@@ -76,6 +100,9 @@ const pageGetMessageList = async () => {
       observe && observe.unobserve(box);
       observe = null;
     }
+    nextTick(() => {
+      gsapTransXScale(classList, 0.85, 0.8);
+    });
   }
   loading.value = false;
 };
@@ -162,6 +189,7 @@ const handleDeleteMessage = (item) => {
 };
 
 const getHotMessageTag = async () => {
+  tabList.value = [];
   const res = await getMessageTag();
   if (res.code == 0) {
     tabList.value = Array.isArray(res.result)
@@ -183,15 +211,25 @@ const mouseDown = () => {
 const mouseLeave = () => {
   showSearch.value = false;
 };
-// TODO 改成搜索内容
+
 const changeSearch = (val) => {
-  param.tag = val;
+  param.message = val;
   pageGetMessageList();
 };
 
 onMounted(async () => {
+  _removeLocalItem("message-refresh");
   await getHotMessageTag();
   await pageGetMessageList();
+});
+
+onActivated(async () => {
+  if (_getLocalItem("message-refresh")) {
+    Object.assign(param, primaryParam);
+    await getHotMessageTag();
+    await pageGetMessageList();
+    _removeLocalItem("message-refresh");
+  }
 });
 
 onBeforeUnmount(() => {
@@ -226,11 +264,24 @@ onBeforeUnmount(() => {
       <div class="search-tab" @mousedown="mouseDown" @mouseleave="mouseLeave">
         <ul class="tab">
           <li v-for="item in tabList" :key="item.key" @click="changeTab(item.key, item.label)">
-            <div :class="[item.key == activeTab ? 'active-tab' : '', 'tab-li']">{{ item.label }}</div>
+            <div :class="[item.key == activeTab ? 'active-tab' : '', 'tab-li']">
+              {{ item.label }}
+            </div>
           </li>
-          <Transition :duration="{ enter: 0, leave: 500 }" enter-active-class="animate__animated animate__fadeIn" leave-active-class="animate__animated animate__fadeOut">
+          <Transition
+            :duration="{ enter: 0, leave: 500 }"
+            enter-active-class="animate__animated animate__fadeIn"
+            leave-active-class="animate__animated animate__fadeOut"
+          >
             <div v-if="showSearch" class="flex justify-center items-center">
-              <el-input :prefix-icon="Search" class="search" v-model="searchTag" placeholder="搜索标签" @change="changeSearch" clearable></el-input>
+              <el-input
+                :prefix-icon="Search"
+                class="search"
+                v-model="searchTag"
+                placeholder="搜索留言内容"
+                @change="changeSearch"
+                clearable
+              ></el-input>
             </div>
           </Transition>
         </ul>
@@ -242,39 +293,87 @@ onBeforeUnmount(() => {
           </div>
         </template>
         <el-row class="row-height" :gutter="16">
-          <el-col :xs="24" :sm="12" v-for="(message, index) in messageList" :key="index">
+          <el-col
+            :class="'message' + index"
+            :xs="24"
+            :sm="12"
+            v-for="(message, index) in messageList"
+            :key="index"
+          >
             <el-card class="card-hover">
-              <div :style="{ backgroundColor: message.bg_color }" class="message-card animate__animated animate__fadeIn">
-                <div class="img-loading" v-if="message.bg_url" v-image :data-src="message.bg_url"></div>
-                <div class="top" :style="{ backgroundImage: message.bg_url ? `url(${message.bg_url})` : '' }">
+              <div
+                :style="{ backgroundColor: message.bg_color }"
+                class="message-card animate__animated animate__fadeIn"
+              >
+                <div class="img-loading" v-if="message.bg_url" v-image="message.bg_url"></div>
+                <div
+                  class="top"
+                  :style="{ backgroundImage: message.bg_url ? `url(${message.bg_url})` : '' }"
+                >
                   <div class="top-header">
                     <div class="flex items-center">
-                      <el-avatar class="left-avatar" :src="message.avatar">{{ message.nick_name }} </el-avatar>
+                      <el-avatar class="left-avatar" :src="message.avatar"
+                        >{{ message.nick_name }}
+                      </el-avatar>
                       <span class="nick-name"> {{ message.nick_name }}</span>
                     </div>
-                    <div class="flex items-center cursor-pointer option-top" v-if="(getUserInfo.id && getUserInfo.id == message.user_id) || getUserInfo.role == 1">
+                    <div
+                      class="flex items-center cursor-pointer option-top"
+                      v-if="
+                        (getUserInfo.id && getUserInfo.id == message.user_id) ||
+                        getUserInfo.role == 1
+                      "
+                    >
                       <el-icon @click="handleEditMessage(message)"><Edit /></el-icon>
-                      <el-icon class="!ml-[10px]" @click="handleDeleteMessage(message)"><Delete /></el-icon>
+                      <el-icon class="!ml-[10px]" @click="handleDeleteMessage(message)"
+                        ><Delete
+                      /></el-icon>
                     </div>
                   </div>
-                  <div v-if="containHTML(filterMessage(message.message))" v-html="filterMessage(message.message)" :style="{ color: message.color, fontSize: message.font_size + 'px', fontWeight: message.font_weight }"></div>
-                  <div v-else :style="{ color: message.color, fontSize: message.font_size + 'px', fontWeight: message.font_weight }">
+                  <div
+                    v-if="containHTML(filterMessage(message.message))"
+                    v-html="filterMessage(message.message)"
+                    :style="{
+                      color: message.color,
+                      fontSize: message.font_size + 'px',
+                      fontWeight: message.font_weight,
+                    }"
+                  ></div>
+                  <div
+                    v-else
+                    :style="{
+                      color: message.color,
+                      fontSize: message.font_size + 'px',
+                      fontWeight: message.font_weight,
+                    }"
+                  >
                     {{ message.message }}
                   </div>
                 </div>
                 <div class="bottom">
                   <div class="left flex items-center">
                     <div class="time">{{ returnTime(message.createdAt) }}前</div>
-                    <div class="message-comment cursor-pointer !mr-[10px]" @click="comment(message)">
+                    <div
+                      class="message-comment cursor-pointer !mr-[10px]"
+                      @click="comment(message)"
+                    >
                       <span>评论</span>
                       <span class="!ml-[5px]">{{ message.comment_total }}</span>
                     </div>
                     <div class="index-tag">#{{ message.tag }}</div>
                   </div>
                   <div class="flex justify-start items-center option">
-                    <div class="cursor-pointer scale flex items-center" @click="like(message, index)">
-                      <svg-icon :name="message.is_like ? 'redHeart' : 'greyHeart'" :width="1.5"></svg-icon>
-                      <span :style="{ color: message.is_like ? '#f00' : '' }" class="!ml-[5px]">{{ message.like_times || 0 }}</span>
+                    <div
+                      class="cursor-pointer scale flex items-center"
+                      @click="like(message, index)"
+                    >
+                      <svg-icon
+                        :name="message.is_like ? 'redHeart' : 'greyHeart'"
+                        :width="1.5"
+                      ></svg-icon>
+                      <span :style="{ color: message.is_like ? '#f00' : '' }" class="!ml-[5px]">{{
+                        message.like_times || 0
+                      }}</span>
                     </div>
                   </div>
                 </div>
@@ -284,7 +383,13 @@ onBeforeUnmount(() => {
         </el-row>
       </el-skeleton>
       <div class="observer">
-        {{ total == 0 ? "这片土地需要你来开辟" : messageList.length >= total ? "暂无更多" : "下拉加载更多" }}
+        {{
+          total == 0
+            ? "这片土地需要你来开辟"
+            : messageList.length >= total
+            ? "暂无更多"
+            : "下拉加载更多"
+        }}
       </div>
     </div>
   </div>

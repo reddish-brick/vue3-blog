@@ -5,16 +5,19 @@
  -->
 
 <script setup>
-import { defineComponent, watch, reactive } from "vue";
-import blogAvatar from "@/assets/img/blogAvatar.png";
+import { defineComponent } from "vue";
+import { music } from "@/store/index";
+import { storeToRefs } from "pinia";
 
 defineComponent({
   name: "Information",
 });
 
-const props = defineProps({
+const { getShowLyricBoard } = storeToRefs(music());
+
+defineProps({
   // 当前播放的音乐
-  currentMusic: {
+  musicInfo: {
     type: Object,
     default: () => {},
   },
@@ -29,39 +32,22 @@ const props = defineProps({
     default: false,
   },
 });
-
-// 音乐信息
-// 这样子定义的好处是可以保证这些是有这个属性的，不用再次判断 也不怕报错
-const musicInfo = reactive({
-  al: {
-    picUrl: blogAvatar,
-  },
-  name: "",
-  ar: [
-    {
-      name: "歌手走丢了",
-    },
-  ],
-});
-
-const sourceMusicInfo = reactive({ ...musicInfo });
-
-watch(
-  () => props.currentMusic,
-  (newV) => {
-    Object.assign(musicInfo, sourceMusicInfo, newV);
-  },
-  {
-    immediate: true,
-    deep: true,
-  }
-);
 </script>
 
 <template>
   <!-- 唱片展示 -->
   <div class="music-info">
-    <img :class="['music-img', 'animate__animated', 'animate__fadeIn', isToggleImg ? '' : 'disc-rotate', isPaused ? 'paused' : '']" :src="musicInfo.al.picUrl" />
+    <img
+      :class="[
+        'music-img',
+        'animate__animated',
+        'animate__fadeIn',
+        isToggleImg ? '' : 'disc-rotate',
+        isPaused ? 'paused' : '',
+      ]"
+      @click="music().setShowLyricBoard(!getShowLyricBoard)"
+      :src="musicInfo.al.picUrl"
+    />
     <div class="music-desc">
       <div class="music-name">
         {{ musicInfo.name }}

@@ -3,24 +3,37 @@ import { watch, onMounted, nextTick } from "vue";
 import { music, staticData } from "@/store";
 import { storeToRefs } from "pinia";
 
-const musicStore = music();
-
 let lyricBox;
 
 const { mainTheme } = storeToRefs(staticData());
 
-const { getCurrentMusicDesc, getCurrentLyticIndex, getShowLyricBoard, getIsToggleImg, getIsPaused, getLyricList } = storeToRefs(musicStore);
+const {
+  getMusicInfo,
+  getIsToggleImg,
+  getMusicDescription,
+  getIsPaused,
+  getCurrentLyticIndex,
+  getShowLyricBoard,
+} = storeToRefs(music());
 
 const scrollToMiddle = () => {
-  let current = document.getElementById("current");
-  if (!current) return;
+  nextTick(() => {
+    let current = document.getElementById("currentLyticIndex");
 
-  let h = current ? current.offsetTop - Math.round(lyricBox.clientHeight / 2) + Math.round(current.offsetHeight / 2) : 0;
-  lyricBox &&
-    lyricBox.scrollTo({
-      top: h,
-      behavior: "smooth",
-    });
+    if (!current) return;
+
+    let h = current
+      ? current.offsetTop -
+        Math.round(lyricBox.clientHeight / 2) +
+        Math.round(current.offsetHeight / 2)
+      : 0;
+
+    lyricBox &&
+      lyricBox.scrollTo({
+        top: h,
+        behavior: "smooth",
+      });
+  });
 };
 
 const fullScreen = () => {
@@ -30,6 +43,10 @@ const fullScreen = () => {
   } else {
     app.requestFullscreen();
   }
+};
+
+const goToIndex = (index) => {
+  music().setCurrentTimeByClickLyric(index);
 };
 
 watch(
@@ -63,21 +80,41 @@ onMounted(() => {
     <div class="!w-[100%] !h-[100%] flex justify-between">
       <div class="left">
         <div class="text-4xl font-semibold">
-          {{ getCurrentMusicDesc?.name }}
+          {{ getMusicDescription?.name }}
         </div>
         <div class="disc-box">
-          <svg-icon class="disc" :name="mainTheme ? 'darkDisc' : 'lightDisc'" :width="22"></svg-icon>
-          <img :class="['music-img', 'animate__animated', 'animate__fadeIn', getIsToggleImg ? '' : 'disc-rotate', getIsPaused ? 'paused' : '']" :src="getCurrentMusicDesc?.al?.picUrl" @click="fullScreen" />
+          <svg-icon
+            class="disc"
+            :name="mainTheme ? 'darkDisc' : 'lightDisc'"
+            :width="22"
+          ></svg-icon>
+          <img
+            :class="[
+              'music-img',
+              'animate__animated',
+              'animate__fadeIn',
+              getIsToggleImg ? '' : 'disc-rotate',
+              getIsPaused ? 'paused' : '',
+            ]"
+            :src="getMusicDescription?.al?.picUrl"
+            @click="fullScreen"
+          />
         </div>
       </div>
       <div id="lyricBox" class="right">
         <div class="!p-[10px]">
           <div>
             <div class="text-2xl leading-loose text-center">
-              {{ getCurrentMusicDesc?.name }}
+              {{ getMusicDescription?.name }}
             </div>
           </div>
-          <div :id="getCurrentLyticIndex == index ? 'current' : ''" :class="['lyric-word', getCurrentLyticIndex == index ? 'current' : '']" v-for="(item, index) in getLyricList" :key="index">
+          <div
+            :id="getCurrentLyticIndex == index ? 'currentLyticIndex' : ''"
+            :class="['lyric-word', getCurrentLyticIndex == index ? 'current' : '']"
+            v-for="(item, index) in getMusicInfo.lyricList"
+            :key="index"
+            @click="goToIndex(index)"
+          >
             {{ item }}
           </div>
         </div>

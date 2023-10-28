@@ -1,7 +1,12 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
 import { getArticleListByTagId, getArticleListByCategoryId } from "@/api/article";
+
+import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+import Tooltip from "@/components/ToolTip/tooltip.vue";
+import Pagination from "@/components/Pagination/pagination.vue";
 
 const router = useRouter();
 const articleList = ref([]);
@@ -11,7 +16,7 @@ const loading = ref(false);
 let param = reactive({
   // 放置页码及相关数据
   current: 1, //当前页
-  size: 10, //每页条目数
+  size: 4, //每页条目数
   id: "",
 });
 let total = ref(0); // 记录总数
@@ -61,7 +66,7 @@ onMounted(() => {
             <SkeletonItem variant="text" width="8rem" height="2rem" />
           </div>
           <div class="flex_r_between skeleton-item">
-            <div v-for="i in 4">
+            <div v-for="i in 4" :key="i">
               <SkeletonItem variant="image" width="15rem" height="6rem" />
               <SkeletonItem variant="text" width="12rem" top="1rem" height="20px" />
               <SkeletonItem variant="text" width="14rem" top="1.5rem" height="15px" />
@@ -71,16 +76,22 @@ onMounted(() => {
       </el-skeleton>
       <template v-else>
         <div class="article-list__head flex_r_between flex-wrap">
-          <div class="article-list__head-type">{{ currentType == "tag" ? "标签 - " + currentName : "分类 - " + currentName }}</div>
+          <div class="article-list__head-type">
+            {{ currentType == "tag" ? "标签 - " + currentName : "分类 - " + currentName }}
+          </div>
           <div class="article-list__head-total">文章总数：{{ total }}</div>
         </div>
         <el-row>
           <el-col :xs="12" :sm="8" :md="6" v-for="(item, index) in articleList" :key="index">
             <el-card class="gradient card-hover" @click="gotoDetail(item.id)">
-              <div v-image :data-src="item.article_cover" class="article-img scale">
-                <el-image class="w-[100%] h-[100%] scale animate__animated animate__fadeInDown" fit="cover" :src="item.article_cover">
+              <div v-image="item.article_cover" class="article-img scale">
+                <el-image
+                  class="w-[100%] h-[100%] scale animate__animated animate__fadeInDown"
+                  fit="cover"
+                  :src="item.article_cover"
+                >
                   <template #error>
-                    <svg-icon name="image" :width="8" :height="8"></svg-icon>
+                    <svg-icon name="image404" :width="8" :height="8"></svg-icon>
                   </template>
                 </el-image>
               </div>
@@ -93,7 +104,13 @@ onMounted(() => {
         </el-row>
       </template>
     </el-card>
-    <pagi-nation :size="param.size" :current="param.current" :layout="layout" :total="total" @pagination="pagination" />
+    <Pagination
+      :size="param.size"
+      :current="param.current"
+      :layout="layout"
+      :total="total"
+      @pagination="pagination"
+    />
   </div>
 </template>
 

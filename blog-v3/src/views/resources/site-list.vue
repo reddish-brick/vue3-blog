@@ -70,15 +70,28 @@ onMounted(() => {
         <el-col :xs="12" :sm="6" v-for="(item, index) in siteList" :key="index">
           <el-card class="card-hover">
             <div class="site-item animate__animated animate__fadeIn" @click="goToSite(item.url)">
-              <div class="left" @mouseenter="mouseEnterItem('site', index)" @mouseleave="mouseLeaveItem">
-                <span :class="['top', activeType == 'site' && active == index ? 'top-animate' : '']"></span>
+              <div
+                class="left"
+                @mouseenter="mouseEnterItem('site', index)"
+                @mouseleave="mouseLeaveItem"
+              >
+                <span
+                  :class="['top', activeType == 'site' && active == index ? 'top-animate' : '']"
+                ></span>
                 <el-avatar fit="scale-down" :size="60" :src="returnUrl(item.url)">
                   <span class="avatar-font" :title="item.name">{{ item.name }}</span></el-avatar
                 >
-                <span :class="['bottom', activeType == 'site' && active == index ? 'bottom-animate' : '']"></span>
+                <span
+                  :class="[
+                    'bottom',
+                    activeType == 'site' && active == index ? 'bottom-animate' : '',
+                  ]"
+                ></span>
               </div>
               <div class="right">
-                <a :title="item.name" :href="item.url" target="_blank" class="name">{{ item.name }}</a>
+                <a :title="item.name" :href="item.url" target="_blank" class="name">{{
+                  item.name
+                }}</a>
                 <span :title="item.desc" class="desc"> {{ item.desc }}</span>
               </div>
             </div>
@@ -226,6 +239,15 @@ onMounted(() => {
 
 :deep(.el-avatar) {
   color: var(--font-color);
-  background: linear-gradient(90deg, #dfd2d2 1%, #ead2ea 10.2%, #e4d5ee 19.6%, #d1def3 36.8%, #b5dee5 62.2%, #cfebf3 88.9%, #dde7ea 99%) !important;
+  background: linear-gradient(
+    90deg,
+    #dfd2d2 1%,
+    #ead2ea 10.2%,
+    #e4d5ee 19.6%,
+    #d1def3 36.8%,
+    #b5dee5 62.2%,
+    #cfebf3 88.9%,
+    #dde7ea 99%
+  ) !important;
 }
 </style>

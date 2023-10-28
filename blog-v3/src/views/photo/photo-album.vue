@@ -3,12 +3,17 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getAllAlbum } from "@/api/photo";
 
+import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
+
 const albumList = ref([]);
 const loading = ref(false);
 
 const router = useRouter();
 const goToPhotos = (item) => {
-  router.push({ path: "/photos", query: { id: item.id, pageTitle: item.album_name, bg: item.album_cover } });
+  router.push({
+    path: "/photos",
+    query: { id: item.id, pageTitle: item.album_name, bg: item.album_cover },
+  });
 };
 
 const getAll = async () => {
@@ -33,21 +38,36 @@ onMounted(() => {
         <el-card class="albumList-card">
           <el-row v-if="loading" class="row-space">
             <el-col class="col-space" :xs="12" :sm="6" v-for="item in 8" :key="item">
-              <div class="albumList-box flex_center">
-                <el-skeleton :rows="1" animated> </el-skeleton>
+              <div class="flex_center">
+                <el-skeleton animated>
+                  <template #template>
+                    <SkeletonItem variant="image" width="100%" height="8rem" />
+                  </template>
+                </el-skeleton>
               </div>
             </el-col>
           </el-row>
           <el-row v-else class="row-space">
             <el-col class="col-space" :xs="12" :sm="6" v-for="item in albumList" :key="item.id">
-              <div v-image :data-src="item.album_cover" class="albumList-box flex_center" @click="goToPhotos(item)">
+              <div
+                v-image="item.album_cover"
+                class="albumList-box flex_center"
+                @click="goToPhotos(item)"
+              >
                 <div class="albumList-box__mask">
                   <span class="name text_overflow"> {{ item.album_name }}</span>
                   <span class="desc text_overflow">{{ item.description }}</span>
                 </div>
-                <el-image class="albumList-box__image animate__animated animate__bounceIn" :src="item.album_cover" fit="cover" lazy>
+                <el-image
+                  class="albumList-box__image animate__animated animate__bounceIn"
+                  :src="item.album_cover"
+                  fit="cover"
+                  lazy
+                >
                   <template #error>
-                    <svg-icon name="image" :width="8" :height="6"></svg-icon>
+                    <div class="w-[100%] h-[100%] grid place-items-center">
+                      <svg-icon name="image404" :width="8" :height="6"></svg-icon>
+                    </div>
                   </template>
                 </el-image>
               </div>

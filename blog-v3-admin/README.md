@@ -44,21 +44,21 @@
 
 已适配移动端、PC端，适合新手用于学习。
 
-#### 前台：
+#### 前台
 
 博客前台基于 vue3、element plus、pinia、axios、vue-router、vue-cli、vue-use、npm、scss 等主流技术
 
-前台线上预览地址：http://mrzym.top
+前台线上预览地址：<http://mrzym.top>
 
-gitee 仓库地址：https://gitee.com/mrzym/blog-v3
+gitee 仓库地址：<https://gitee.com/mrzym/blog-v3>
 
-#### 管理后台：
+#### 管理后台
 
 博客管理后台基于 pureadmin、vue3、element plus、pinia、axios、vue-router、vue-use、pnpm、vite、sass、tailwindcss 等主流技术
 
-后台线上预览地址：http://mrzym.top/admin
+后台线上预览地址：<http://mrzym.top/admin>
 
-gitee 仓库地址： https://gitee.com/mrzym/blog-v3-admin
+gitee 仓库地址： <https://gitee.com/mrzym/blog-v3-admin>
 
 测试账户: test
 
@@ -66,11 +66,11 @@ gitee 仓库地址： https://gitee.com/mrzym/blog-v3-admin
 
 也可以自行注册用户
 
-#### 后端：
+#### 后端
 
 博客后端基于 node.js、koa、koa-router、koa-body、seqlize、mysql、qiniu(七牛云对象存储)、bcryptjs、nodemon 等主流技术
 
-gitee 仓库地址：https://gitee.com/mrzym/blogServer
+gitee 仓库地址：<https://gitee.com/mrzym/blogServer>
 
 ## 🚀 博客后台管理系统下载运行
 
@@ -107,17 +107,17 @@ pnpm run serve
 | 留言管理     | 留言删除 |
 | 友链管理     | 友链审核、编辑、删除 |
 
-
 ## 🛫 期待
 
 #### 功能开发
+
 还留了一个评论管理，接口是写好了的，有兴趣的可以去写一写页面，对一对接口
 
 ## 🌈 部署
 
 博客文章会出一系列的部署教程
 
-教程地址：http://mrzym.top/#/articleList?id=2&type=category&name=%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2
+教程地址：<http://mrzym.top/#/articleList?id=2&type=category&name=%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2>
 
 ## 🥰 感谢
 

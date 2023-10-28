@@ -2,26 +2,26 @@
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { createRouter, createWebHashHistory } from "vue-router";
-import Layout from '@/components/Layout/index.vue'
-import navPage from '@/views/index.vue'
+import Layout from "@/components/Layout/index.vue";
+import navPage from "@/views/index.vue";
 
 const routes = [
   {
     path: "/",
     name: "Nav",
     meta: {
-      name: '导航'
+      name: "导航",
     },
-    component: navPage
+    component: navPage,
   },
   {
-    path: '/',
-    name: 'Layout',
+    path: "/",
+    name: "Layout",
     meta: {
-      name: 'Layout'
+      name: "Layout",
     },
     component: Layout,
-    redirect: '/home',
+    redirect: "/home",
     children: [
       {
         path: "/home",
@@ -29,7 +29,7 @@ const routes = [
         meta: {
           name: "首页",
         },
-        component: () => import('@/views/home/home.vue'),
+        component: () => import("@/views/home/home.vue"),
       },
       {
         path: "/archives",
@@ -95,7 +95,31 @@ const routes = [
         },
         component: () => import("@/views/talk/talk.vue"),
       },
-
+      {
+        path: "/link",
+        name: "link",
+        meta: {
+          name: "友链",
+        },
+        children: [
+          {
+            path: "list",
+            name: "LinkList",
+            meta: {
+              name: "友情链接",
+            },
+            component: () => import("@/views/links/link-list.vue"),
+          },
+          {
+            path: "apply",
+            name: "LinkApply",
+            meta: {
+              name: "申请友链",
+            },
+            component: () => import("@/views/links/link-apply.vue"),
+          },
+        ],
+      },
       {
         path: "/resources",
         name: "Resources",
@@ -118,14 +142,6 @@ const routes = [
               name: "后端",
             },
             component: () => import("@/views/resources/category-list.vue"),
-          },
-          {
-            path: "/resources/link",
-            name: "Link",
-            meta: {
-              name: "友链",
-            },
-            component: () => import("@/views/links/link-list.vue"),
           },
         ],
       },
@@ -158,6 +174,7 @@ const routes = [
             path: "list",
             name: "Message",
             meta: {
+              keepAlive: true,
               name: "留言",
             },
             component: () => import("@/views/message/index.vue"),
@@ -177,11 +194,12 @@ const routes = [
               name: "留言详情",
             },
             component: () => import("@/views/message/detail.vue"),
-          }
-        ]
+          },
+        ],
       },
-    ]
+    ],
   },
+
   {
     path: "/login",
     name: "Login",

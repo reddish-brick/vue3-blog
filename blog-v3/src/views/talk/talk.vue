@@ -1,14 +1,15 @@
 <script setup>
 import { ref, h, reactive, onMounted, onBeforeUnmount } from "vue";
-import { getTalkList, talkLike, cancelTalkLike } from "@/api/talk";
-import { addLike, cancelLike } from "@/api/like";
-
-import TextOverflow from "@/components/TextOverflow/index.vue";
-import SkeletonItem from "@/components/SkletonItem/skeleton-item.vue";
-import Comment from "@/components/Comment/Comment.vue";
 import { user } from "@/store";
-import { ElNotification } from "element-plus";
+
 import { returnTime } from "@/utils/tool";
+import { addLike, cancelLike } from "@/api/like";
+import { getTalkList, talkLike, cancelTalkLike } from "@/api/talk";
+
+import { ElNotification } from "element-plus";
+import TextOverflow from "@/components/TextOverflow/index.vue";
+import Comment from "@/components/Comment/Comment.vue";
+import SkeletonItem from "@/components/SkeletonItem/skeleton-item.vue";
 
 const userStore = user();
 const talkList = ref([]);
@@ -31,7 +32,7 @@ const observeBox = () => {
         if (e.isIntersecting && e.intersectionRatio > 0) {
           if (total.value > talkList.value.length) {
             param.current++;
-            pageGetTalkList(e);
+            pageGetTalkList();
           }
         }
       });
@@ -41,7 +42,7 @@ const observeBox = () => {
   observe.observe(box);
 };
 
-const pageGetTalkList = async (e) => {
+const pageGetTalkList = async () => {
   // 第一次进入才loading
   if (param.current == 1) {
     loading.value = true;
@@ -106,10 +107,11 @@ onBeforeUnmount(() => {
       <el-skeleton :loading="loading" style="height: 100%" animated>
         <template #template>
           <div class="flex justify-start w-[100%] !mt-[10px]" v-for="i in 3" :key="i">
-            <SkeletonItem variant="text" width="60px" height="60px" />
+            <SkeletonItem variant="text" width="80px" height="80px" />
             <div class="w-[70%] !ml-[10px]">
-              <SkeletonItem variant="text" width="20%" height="20px" />
-              <SkeletonItem variant="text" width="90%" height="30px" top="5px" />
+              <SkeletonItem variant="text" width="40%" height="20px" />
+              <SkeletonItem variant="image" width="80%" height="150px" top="10px" />
+              <SkeletonItem variant="text" width="60%" height="20px" top="10px" />
             </div>
           </div>
         </template>
@@ -123,7 +125,13 @@ onBeforeUnmount(() => {
                 <div class="right-top relative">
                   <i v-if="talk.is_top == 1" class="iconfont icon-zhiding"></i>
                   <span class="nick-name">{{ talk.nick_name }}</span>
-                  <TextOverflow class="content" :text="talk.content" :width="308" :maxLines="8" :font-size="14">
+                  <TextOverflow
+                    class="content"
+                    :text="talk.content"
+                    :width="308"
+                    :maxLines="8"
+                    :font-size="14"
+                  >
                     <template v-slot:default="{ clickToggle, expanded }">
                       <span @click="clickToggle" class="btn">
                         {{ expanded ? "收起" : "展开" }}
@@ -131,21 +139,55 @@ onBeforeUnmount(() => {
                     </template>
                   </TextOverflow>
                 </div>
-                <div class="right-bottom" v-if="Array.isArray(talk.talkImgList) && talk.talkImgList.length > 1">
-                  <div class="image" v-image :data-src="url" v-for="(url, index) in talk.talkImgList" :key="index">
-                    <el-image class="w-[100%] h-[100%]" :src="url" loading="lazy" preview-teleported :initial-index="index" fit="cover" :preview-src-list="talk.talkImgList.map((v) => v)">
+                <div
+                  class="right-bottom"
+                  v-if="Array.isArray(talk.talkImgList) && talk.talkImgList.length > 1"
+                >
+                  <div
+                    class="image"
+                    v-image="url"
+                    v-for="(url, index) in talk.talkImgList"
+                    :key="index"
+                  >
+                    <el-image
+                      class="w-[100%] h-[100%]"
+                      :src="url"
+                      loading="lazy"
+                      preview-teleported
+                      :initial-index="index"
+                      fit="cover"
+                      :preview-src-list="talk.talkImgList.map((v) => v)"
+                    >
                       <template #error>
-                        <svg-icon name="image" :width="5" :height="5"></svg-icon>
+                        <div class="w-[100%] h-[100%] grid place-items-center">
+                          <svg-icon name="image404" :width="5" :height="5"></svg-icon>
+                        </div>
                       </template>
                     </el-image>
                   </div>
                 </div>
                 <!-- 只有一张图片就单独大图展示 -->
-                <div class="right-bottom-one" v-else-if="Array.isArray(talk.talkImgList) && talk.talkImgList.length == 1">
-                  <div class="flex justify-center items-center w-[100%] h-[100%] overflow-hidden" v-image :data-src="talk.talkImgList[0]">
-                    <el-image class="w-[100%] h-[100%]" :src="talk.talkImgList[0]" loading="lazy" preview-teleported :initial-index="index" fit="cover" :preview-src-list="talk.talkImgList.map((v) => v)">
+                <div
+                  class="right-bottom-one"
+                  v-else-if="Array.isArray(talk.talkImgList) && talk.talkImgList.length == 1"
+                >
+                  <div
+                    class="flex justify-center items-center w-[100%] h-[100%] overflow-hidden"
+                    v-image="talk.talkImgList[0]"
+                  >
+                    <el-image
+                      class="w-[100%] h-[100%]"
+                      :src="talk.talkImgList[0]"
+                      loading="lazy"
+                      preview-teleported
+                      :initial-index="index"
+                      fit="cover"
+                      :preview-src-list="talk.talkImgList.map((v) => v)"
+                    >
                       <template #error>
-                        <svg-icon name="image" :width="5" :height="5"></svg-icon>
+                        <div class="w-[100%] h-[100%] grid place-items-center">
+                          <svg-icon name="image404" :width="8" :height="8"></svg-icon>
+                        </div>
                       </template>
                     </el-image>
                   </div>
@@ -153,8 +195,14 @@ onBeforeUnmount(() => {
                 <div class="like flex justify-between items-center !mt-[15px]">
                   <div class="time">{{ returnTime(talk.createdAt) }}前</div>
                   <div>
-                    <i :class="['iconfont', 'icon-icon1', talk.is_like ? 'is-like' : '']" @click="like(talk, index)"> </i>
-                    <span :class="[talk.is_like ? 'is-like' : '', '!ml-[5px]']">{{ talk.like_times }}</span>
+                    <i
+                      :class="['iconfont', 'icon-icon1', talk.is_like ? 'is-like' : '']"
+                      @click="like(talk, index)"
+                    >
+                    </i>
+                    <span :class="[talk.is_like ? 'is-like' : '', '!ml-[5px]']">{{
+                      talk.like_times
+                    }}</span>
                   </div>
                 </div>
                 <div class="!mt-[10px]">

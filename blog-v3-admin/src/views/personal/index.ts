@@ -11,6 +11,7 @@ import { message } from "@/utils/message";
 import { storageSession } from "@pureadmin/utils";
 import { userInfoType } from "@/store/modules/types";
 import { ElLoading } from "element-plus";
+import { deepClone } from "@/utils/utils";
 
 export function useSite() {
   const myInfoForm = reactive({
@@ -18,6 +19,7 @@ export function useSite() {
     avatar: "",
     avatarList: []
   });
+  const primaryMyInfoForm = reactive({});
 
   const passwordForm = reactive({
     password: "",
@@ -58,7 +60,6 @@ export function useSite() {
     password2: [{ required: true, validator: password2V, trigger: "blur" }]
   });
 
-  const isEditSiteInfo = ref(false);
   const isEditMyInfo = ref(false);
   const isEditPassword = ref(false); // 控制编辑与保存
 
@@ -83,9 +84,6 @@ export function useSite() {
 
   function edit(type) {
     switch (type) {
-      case "site":
-        isEditSiteInfo.value = true;
-        break;
       case "info":
         isEditMyInfo.value = true;
         break;
@@ -103,7 +101,9 @@ export function useSite() {
       case "info":
         isEditMyInfo.value = false;
         ref.clearValidate();
-        initMyInfo();
+        Object.assign(myInfoForm, primaryMyInfoForm);
+        Object.assign(primaryMyInfoForm, deepClone(myInfoForm));
+
         break;
       case "psd":
         isEditPassword.value = false;
@@ -144,6 +144,8 @@ export function useSite() {
           }
         ];
       }
+
+      Object.assign(primaryMyInfoForm, deepClone(myInfoForm));
     }
   }
   // 修改个人信息

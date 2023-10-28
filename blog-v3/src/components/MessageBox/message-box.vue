@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted, reactive, h } from "vue";
-import { Delete, Compass } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+
 import { getNotifylist, updateNotify, deleteNotify } from "@/api/notify";
-import { ElNotification } from "element-plus";
 import { containHTML } from "@/utils/tool";
+
+import { ElNotification } from "element-plus";
+import { Delete, Compass } from "@element-plus/icons-vue";
 
 const router = useRouter();
 
@@ -52,6 +54,9 @@ const readMessage = async (id) => {
 };
 
 const jump = async (item) => {
+  // 消费message
+  item.isView == 1 && (await readMessage(item.id));
+
   switch (item.type + "") {
     // 文章
     case "1":
@@ -70,8 +75,7 @@ const jump = async (item) => {
       window.open("http://mrzym.top/admin");
       break;
   }
-  // 消费message
-  item.isView == 1 && (await readMessage(item.id));
+
   handleClose();
 };
 
@@ -124,9 +128,17 @@ onMounted(async () => {
 <template>
   <div class="message-drawer">
     <i class="iconfont icon-xiaoxi" @click="toggleDrawer">
-      <el-badge class="red-total" v-if="redTotal" :value="redTotal" :max="99"> </el-badge>
+      <el-badge class="red-total" v-if="redTotal" :value="redTotal" :max="9"> </el-badge>
     </i>
-    <el-drawer class="message-drawer__body" v-model="drawerShow" :size="type == 'pc' ? '40%' : '80%'" title="我的消息" direction="ltr" :before-close="handleClose" :append-to-body="true">
+    <el-drawer
+      class="message-drawer__body"
+      v-model="drawerShow"
+      :size="type == 'pc' ? '40%' : '80%'"
+      title="我的消息"
+      direction="ltr"
+      :before-close="handleClose"
+      :append-to-body="true"
+    >
       <el-card class="p-[15px] mt-[10px] card-hover" v-for="item in messageList" :key="item.id">
         <div class="flex items-center" @click="jump(item)">
           <el-badge class="w-[90%]" v-if="item.isView == 1" :value="'new'">
@@ -139,8 +151,17 @@ onMounted(async () => {
           </div>
         </div>
         <div class="flex items-center justify-end">
-          <el-icon @click="jump(item)"><Compass :class="['jump', item.isView != 1 ? 'grey' : '']" /></el-icon>
-          <el-popconfirm width="120" confirm-button-text="确认" cancel-button-text="取消" icon-color="#626AEF" title="确定删除吗?" @confirm="deleteMessage(item)">
+          <el-icon @click="jump(item)"
+            ><Compass :class="['jump', item.isView != 1 ? 'grey' : '']"
+          /></el-icon>
+          <el-popconfirm
+            width="120"
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            icon-color="#626AEF"
+            title="确定删除吗?"
+            @confirm="deleteMessage(item)"
+          >
             <template #reference>
               <el-icon class="ml-[5px]"><Delete class="delete" /></el-icon>
             </template>
@@ -148,7 +169,13 @@ onMounted(async () => {
         </div>
       </el-card>
       <div class="observer" @click="getMore">
-        {{ !messageList.length ? "空空如也" : messageList.length >= messageTotal ? "已经到底啦" : "加载更多" }}
+        {{
+          !messageList.length
+            ? "空空如也"
+            : messageList.length >= messageTotal
+            ? "已经到底啦"
+            : "加载更多"
+        }}
       </div>
     </el-drawer>
   </div>
