@@ -8,6 +8,7 @@
 
 #### 安装教程
 每一个项目都有一个md文档会有教程
+[博客部署教程](http://mrzym.top/#/articleList?id=2&type=category&name=%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2)
 
 #### 使用说明
 免费使用
