@@ -1,4 +1,4 @@
-import { reqMusicDetail, reqMusicLyricById } from "@/api/music";
+import { reqMusicDetail, reqMusicDescription, reqMusicLyricById } from "@/api/music";
 
 export const MODELLIST = [
   "RANDOM", // 随机
@@ -137,9 +137,15 @@ export const getMusicDetail = async (id) => {
   });
   if (res.code == 200) {
     // 设置音乐详情 播放器通过监听音乐的id 进行音乐播放
-    return {
-      detail: res.data[0],
-    };
+    return res.data[0];
+  }
+};
+
+export const getMusicDescription = async (id) => {
+  const res = await reqMusicDescription(id);
+  if (res.code == 200) {
+    // 设置音乐详情 播放器通过监听音乐的id 进行音乐播放
+    return res.songs;
   }
 };
 

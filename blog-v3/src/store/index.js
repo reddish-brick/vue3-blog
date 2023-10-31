@@ -13,7 +13,9 @@ import {
   calcMusicSchedule,
   getMusicDetail,
   getLyric,
+  getMusicDescription,
 } from "@/components/Music/musicTool";
+
 import blogAvatar from "@/assets/img/blogAvatar.png";
 
 // 可以去看看vueUse怎么使用useDark 这个可以快速切换主题
@@ -164,12 +166,11 @@ export const music = defineStore("music", {
     return {
       volume: 0.5, // 音量
       isPaused: true, // 音乐播放器是否正在播放
-      isToggleMusic: false, // 是否切换音乐
       currentTime: 0, // 当前播放的时间
       duration: 0, // 歌曲总时长
       musicInfo: {
         id: "", // 正在播放歌曲的id
-        detail: {}, // 正在播放音乐的详情 音乐地址
+        url: "", // 正在播放音乐的详情 音乐地址
         lyricList: [], // 歌词列表
         lyricTimeList: [], // 歌词时间列表
       },
@@ -296,13 +297,7 @@ export const music = defineStore("music", {
     },
     // 初始化播放音乐
     setPlay(isInit = false) {
-      // 播放音乐
-      if (!audio || !this.musicInfo.id || !this.musicInfo.detail) {
-        return;
-      }
       this.clear();
-      // 指定音乐的url
-      audio.src = this.musicInfo.detail.url;
 
       // 如果初始化的时候播放进度大于0说明已经播放一段时间了，得自动切换到这歌进度来
       if (isInit) {
@@ -313,7 +308,7 @@ export const music = defineStore("music", {
       }
 
       // 切换歌曲的时候，让图片回到初始状态
-      this.isToggleMusic = true;
+      this.isToggleImg = true;
 
       if (isInit) {
         if (this.isPaused) {
@@ -323,6 +318,7 @@ export const music = defineStore("music", {
             .play()
             .then(() => {
               this.isPaused = false;
+              this.isToggleImg = false;
             })
             .catch((res) => {
               this.isPaused = true;
@@ -334,6 +330,7 @@ export const music = defineStore("music", {
           .play()
           .then(() => {
             this.isPaused = false;
+            this.isToggleImg = false;
           })
           .catch((res) => {
             this.isPaused = true;
@@ -342,45 +339,49 @@ export const music = defineStore("music", {
       }
     },
     togglePlay() {
-      this.isToggleMusic = false;
+      this.isToggleImg = false;
       if (this.isPaused) {
-        audio.play();
-        this.isPaused = false;
+        audio
+          .play()
+          .then(() => {
+            this.isPaused = false;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } else {
         audio.pause();
-        this.isPaused = true;
       }
     },
     // 设置下一首，或者上一首 ，根据传入参数判断 true 下一首 false 上一首
     setNext(flag = true) {
       let len = this.musicList.length;
-      let index = this.musicList.findIndex((item) => item.id == this.musicInfo.detail.id);
+      let index = this.musicList.findIndex((item) => item.id == this.musicInfo.id);
       // 随机/顺序/单曲循环播放的逻辑
       const musicIndex = getNextMusic(len, index, this.playModel, flag);
       this.setMusicInfo(this.musicList[musicIndex].id);
     },
     // 设置当前播放音乐的信息 搜索列表的歌曲信息时没有的需要传过来
-    async setMusicInfo(id, isInit = false, desc = null) {
+    async setMusicInfo(id, isInit = false) {
       if (!id) return;
+      const des = await getMusicDescription(id);
       // 通过音乐id 获取音乐简介 描述 歌词信息
-      if (desc) {
-        this.setMusicDescription(desc);
-      } else {
-        let musicD = this.musicList.find((item) => item.id == id);
-        if (musicD) {
-          this.setMusicDescription(musicD);
-        }
+      if (des) {
+        this.setMusicDescription(des[0]);
       }
 
+      // 主要是获取歌曲播放的url地址
       const musicDetail = await getMusicDetail(id);
       const lyric = await getLyric(id);
       let musicInfo = {
         id: id,
-        detail: musicDetail.detail, // 正在播放音乐的详情 音乐地址
+        url: musicDetail.url, // 正在播放音乐的详情 音乐地址
         lyricList: lyric.lyricList, // 歌词列表
         lyricTimeList: lyric.lyricTimeList, // 歌词时间列表
       };
+      audio.src = musicDetail.url;
       this.musicInfo = musicInfo;
+
       !isInit && (await this.setPlay());
     },
     setMusicDescription(val) {

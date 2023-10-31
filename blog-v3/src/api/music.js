@@ -20,10 +20,19 @@ export const reqTopDetaliList = ({ id, limit, offset }) => {
   });
 };
 
-/** 获取歌曲详情 */
+/** 获取歌曲详情 主要是播放地址 */
 export const reqMusicDetail = ({ id, level }) => {
   return new Promise((resolve, reject) => {
     http.get(`/wapi/song/url/v1?id=${id}&level=${level}`, {}).then((res) => {
+      resolve(res);
+    });
+  });
+};
+
+// 获取音乐的描述
+export const reqMusicDescription = (id) => {
+  return new Promise((resolve, reject) => {
+    http.get(`/wapi//song/detail?ids=${id}`, {}).then((res) => {
       resolve(res);
     });
   });

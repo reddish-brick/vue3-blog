@@ -24,7 +24,7 @@ const params = reactive({
 
 const playMusic = (item) => {
   // 设置当前播放音乐
-  music().setMusicInfo(item.id, false, item);
+  music().setMusicInfo(item.id, false);
   // 设置播放音乐的详细描述
   music().setPlayType(PLAYTYPE.CUSTOM);
 };
