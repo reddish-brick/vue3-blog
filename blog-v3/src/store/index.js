@@ -165,7 +165,7 @@ export const music = defineStore("music", {
   state: () => {
     return {
       volume: 0.5, // 音量
-      isPaused: true, // 音乐播放器是否正在播放
+      isPaused: true, // 音乐播放器是否暂停
       currentTime: 0, // 当前播放的时间
       duration: 0, // 歌曲总时长
       musicInfo: {
@@ -287,8 +287,6 @@ export const music = defineStore("music", {
       if (this.musicInfo.id) {
         this.setMusicInfo(this.musicInfo.id, true);
       }
-
-      this.setPlay(true);
     },
     // 清空当前的时长
     clear() {
@@ -351,6 +349,7 @@ export const music = defineStore("music", {
           });
       } else {
         audio.pause();
+        this.isPaused = true;
       }
     },
     // 设置下一首，或者上一首 ，根据传入参数判断 true 下一首 false 上一首
@@ -382,7 +381,7 @@ export const music = defineStore("music", {
       audio.src = musicDetail.url;
       this.musicInfo = musicInfo;
 
-      !isInit && (await this.setPlay());
+      await this.setPlay(isInit);
     },
     setMusicDescription(val) {
       this.musicDescription = val;
