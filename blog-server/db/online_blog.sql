@@ -1,26 +1,5 @@
-/*
- Navicat Premium Data Transfer
+-- `one-blog`.blog_article definition
 
- Source Server         : mysql
- Source Server Type    : MySQL
- Source Server Version : 80027
- Source Host           : localhost:3306
- Source Schema         : online_blog
-
- Target Server Type    : MySQL
- Target Server Version : 80027
- File Encoding         : 65001
-
- Date: 11/10/2023 14:17:57
-*/
-
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for blog_article
--- ----------------------------
-DROP TABLE IF EXISTS `blog_article`;
 CREATE TABLE `blog_article` (
   `id` int NOT NULL AUTO_INCREMENT,
   `article_title` varchar(255) DEFAULT NULL COMMENT '文章标题 不能为空',
@@ -39,12 +18,11 @@ CREATE TABLE `blog_article` (
   `thumbs_up_times` int DEFAULT '0' COMMENT '文章点赞次数',
   `reading_duration` double DEFAULT '0' COMMENT '文章阅读时长',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_article_tag
--- ----------------------------
-DROP TABLE IF EXISTS `blog_article_tag`;
+
+-- `one-blog`.blog_article_tag definition
+
 CREATE TABLE `blog_article_tag` (
   `id` int NOT NULL AUTO_INCREMENT,
   `article_id` int DEFAULT NULL COMMENT '文章id',
@@ -52,12 +30,11 @@ CREATE TABLE `blog_article_tag` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=184 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_category
--- ----------------------------
-DROP TABLE IF EXISTS `blog_category`;
+
+-- `one-blog`.blog_category definition
+
 CREATE TABLE `blog_category` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category_name` varchar(55) DEFAULT NULL COMMENT '分类名称 唯一',
@@ -79,12 +56,11 @@ CREATE TABLE `blog_category` (
   UNIQUE KEY `category_name_13` (`category_name`) USING BTREE,
   UNIQUE KEY `category_name_14` (`category_name`) USING BTREE,
   UNIQUE KEY `category_name_15` (`category_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_comment
--- ----------------------------
-DROP TABLE IF EXISTS `blog_comment`;
+
+-- `one-blog`.blog_comment definition
+
 CREATE TABLE `blog_comment` (
   `id` int NOT NULL AUTO_INCREMENT,
   `parent_id` int DEFAULT NULL COMMENT '评论父级id',
@@ -102,12 +78,11 @@ CREATE TABLE `blog_comment` (
   `updatedAt` datetime DEFAULT NULL,
   `ip` varchar(255) DEFAULT NULL COMMENT 'ip地址',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=206 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=utf8mb3;
 
--- ----------------------------
--- Table structure for blog_config
--- ----------------------------
-DROP TABLE IF EXISTS `blog_config`;
+
+-- `one-blog`.blog_config definition
+
 CREATE TABLE `blog_config` (
   `id` int NOT NULL AUTO_INCREMENT,
   `blog_name` varchar(55) DEFAULT '小张的博客' COMMENT '博客名称',
@@ -130,10 +105,9 @@ CREATE TABLE `blog_config` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_header
--- ----------------------------
-DROP TABLE IF EXISTS `blog_header`;
+
+-- `one-blog`.blog_header definition
+
 CREATE TABLE `blog_header` (
   `id` int NOT NULL AUTO_INCREMENT,
   `bg_url` varchar(255) DEFAULT NULL COMMENT '背景图',
@@ -143,10 +117,10 @@ CREATE TABLE `blog_header` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb3;
 
--- ----------------------------
--- Table structure for blog_like
--- ----------------------------
-DROP TABLE IF EXISTS `blog_like`;
+-- DBeaver tool
+
+-- `one-blog`.blog_like definition
+
 CREATE TABLE `blog_like` (
   `id` int NOT NULL AUTO_INCREMENT,
   `type` int DEFAULT NULL COMMENT '点赞类型 1 文章 2 说说 3 留言 4 评论',
@@ -155,12 +129,11 @@ CREATE TABLE `blog_like` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb3;
 
--- ----------------------------
--- Table structure for blog_links
--- ----------------------------
-DROP TABLE IF EXISTS `blog_links`;
+
+-- `one-blog`.blog_links definition
+
 CREATE TABLE `blog_links` (
   `id` int NOT NULL AUTO_INCREMENT,
   `site_name` varchar(55) DEFAULT NULL COMMENT '网站名称',
@@ -173,10 +146,9 @@ CREATE TABLE `blog_links` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb3;
 
--- ----------------------------
--- Table structure for blog_message
--- ----------------------------
-DROP TABLE IF EXISTS `blog_message`;
+
+-- `one-blog`.blog_message definition
+
 CREATE TABLE `blog_message` (
   `id` int NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) DEFAULT NULL COMMENT '标签',
@@ -194,10 +166,9 @@ CREATE TABLE `blog_message` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb3;
 
--- ----------------------------
--- Table structure for blog_notify
--- ----------------------------
-DROP TABLE IF EXISTS `blog_notify`;
+
+-- `one-blog`.blog_notify definition
+
 CREATE TABLE `blog_notify` (
   `id` int NOT NULL AUTO_INCREMENT,
   `message` varchar(555) DEFAULT NULL COMMENT '通知内容',
@@ -208,12 +179,11 @@ CREATE TABLE `blog_notify` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb3;
 
--- ----------------------------
--- Table structure for blog_photo
--- ----------------------------
-DROP TABLE IF EXISTS `blog_photo`;
+
+-- `one-blog`.blog_photo definition
+
 CREATE TABLE `blog_photo` (
   `id` int NOT NULL AUTO_INCREMENT,
   `album_id` int DEFAULT NULL COMMENT '相册 id 属于哪个相册',
@@ -222,12 +192,11 @@ CREATE TABLE `blog_photo` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_photo_album
--- ----------------------------
-DROP TABLE IF EXISTS `blog_photo_album`;
+
+-- `one-blog`.blog_photo_album definition
+
 CREATE TABLE `blog_photo_album` (
   `id` int NOT NULL AUTO_INCREMENT,
   `album_name` varchar(26) DEFAULT NULL COMMENT '相册名称',
@@ -236,12 +205,11 @@ CREATE TABLE `blog_photo_album` (
   `updatedAt` datetime DEFAULT NULL,
   `album_cover` varchar(555) DEFAULT NULL COMMENT '相册封面',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_recommend
--- ----------------------------
-DROP TABLE IF EXISTS `blog_recommend`;
+
+-- `one-blog`.blog_recommend definition
+
 CREATE TABLE `blog_recommend` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(55) DEFAULT NULL COMMENT '推荐网站标题',
@@ -251,10 +219,9 @@ CREATE TABLE `blog_recommend` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_tag
--- ----------------------------
-DROP TABLE IF EXISTS `blog_tag`;
+
+-- `one-blog`.blog_tag definition
+
 CREATE TABLE `blog_tag` (
   `id` int NOT NULL AUTO_INCREMENT,
   `tag_name` varchar(55) DEFAULT NULL COMMENT '标签名称 唯一',
@@ -285,12 +252,11 @@ CREATE TABLE `blog_tag` (
   UNIQUE KEY `tag_name_22` (`tag_name`) USING BTREE,
   UNIQUE KEY `tag_name_23` (`tag_name`) USING BTREE,
   UNIQUE KEY `tag_name_24` (`tag_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_talk
--- ----------------------------
-DROP TABLE IF EXISTS `blog_talk`;
+
+-- `one-blog`.blog_talk definition
+
 CREATE TABLE `blog_talk` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL COMMENT '发布说说的用户id',
@@ -301,12 +267,11 @@ CREATE TABLE `blog_talk` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_talk_photo
--- ----------------------------
-DROP TABLE IF EXISTS `blog_talk_photo`;
+
+-- `one-blog`.blog_talk_photo definition
+
 CREATE TABLE `blog_talk_photo` (
   `id` int NOT NULL AUTO_INCREMENT,
   `talk_id` int DEFAULT NULL COMMENT '说说的id',
@@ -314,12 +279,11 @@ CREATE TABLE `blog_talk_photo` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
--- ----------------------------
--- Table structure for blog_user
--- ----------------------------
-DROP TABLE IF EXISTS `blog_user`;
+
+-- `one-blog`.blog_user definition
+
 CREATE TABLE `blog_user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(255) DEFAULT NULL COMMENT '账号，唯一',
@@ -354,6 +318,40 @@ CREATE TABLE `blog_user` (
   UNIQUE KEY `username_20` (`username`) USING BTREE,
   UNIQUE KEY `username_21` (`username`) USING BTREE,
   UNIQUE KEY `username_22` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=164 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
 
-SET FOREIGN_KEY_CHECKS = 1;
+
+
+INSERT INTO `one-blog`.blog_article (article_title,author_id,category_id,article_content,article_cover,is_top,status,`type`,origin_url,createdAt,updatedAt,view_times,article_description,thumbs_up_times,reading_duration) VALUES
+	 ('java牛逼',162,4,'**java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼java牛逼**','http://127.0.0.1:8888/online/95cc3bee3356565852fa0fa02',2,1,1,NULL,'2023-11-21 10:25:35','2023-11-21 10:37:42',6,'java牛逼',1,108388.0),
+	 ('kotlin牛逼',162,5,'**kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼kotlin牛逼**','http://127.0.0.1:8888/online/95cc3bee3356565852fa0fa01',2,1,1,NULL,'2023-11-21 10:29:43','2023-11-21 10:35:56',3,'kotlin牛逼',1,52415.0);
+INSERT INTO `one-blog`.blog_article_tag (article_id,tag_id,createdAt,updatedAt) VALUES
+	 (13,16,'2023-11-21 10:29:43','2023-11-21 10:29:43'),
+	 (12,15,'2023-11-21 10:30:02','2023-11-21 10:30:02');
+INSERT INTO `one-blog`.blog_category (category_name,createdAt,updatedAt) VALUES
+	 ('java','2023-11-21 10:23:41','2023-11-21 10:23:41'),
+	 ('kotlin','2023-11-21 10:27:14','2023-11-21 10:27:14');
+INSERT INTO `one-blog`.blog_comment (parent_id,for_id,`type`,from_id,from_name,from_avatar,to_id,to_name,to_avatar,content,thumbs_up,createdAt,updatedAt,ip) VALUES
+	 (NULL,13,1,163,'gogo tone','http://mrzym.top/online/9bb507f4bd065759a3d093d04.webp',NULL,NULL,NULL,'厉害啊',0,'2023-11-21 10:35:14','2023-11-21 10:35:14','127.0.0.1'),
+	 (NULL,12,1,163,'gogo tone','http://mrzym.top/online/9bb507f4bd065759a3d093d04.webp',NULL,NULL,NULL,'厉害啊',0,'2023-11-21 10:36:32','2023-11-21 10:36:32','127.0.0.1');
+INSERT INTO `one-blog`.blog_like (`type`,for_id,user_id,createdAt,updatedAt) VALUES
+	 (1,13,163,'2023-11-21 10:35:55','2023-11-21 10:35:55'),
+	 (1,12,163,'2023-11-21 10:35:59','2023-11-21 10:35:59');
+INSERT INTO `one-blog`.blog_notify (message,user_id,`type`,to_id,isView,createdAt,updatedAt) VALUES
+	 ('您的文章收到了来自于：gogo tone 的评论: 厉害啊！',162,1,13,1,'2023-11-21 10:35:14','2023-11-21 10:35:14'),
+	 ('您的文章收到了来自于：gogo tone 的评论: 厉害啊！',162,1,12,1,'2023-11-21 10:36:32','2023-11-21 10:36:32');
+INSERT INTO `one-blog`.blog_photo (album_id,url,status,createdAt,updatedAt) VALUES
+	 (11,'http://127.0.0.1:8888/online/95cc3bee3356565852fa0fa06',1,'2023-11-21 10:46:24','2023-11-21 10:46:24'),
+	 (11,'http://127.0.0.1:8888/online/95cc3bee3356565852fa0fa07',1,'2023-11-21 10:46:24','2023-11-21 10:46:24');
+INSERT INTO `one-blog`.blog_photo_album (album_name,description,createdAt,updatedAt,album_cover) VALUES
+	 ('技术','技术相关','2023-11-21 10:43:37','2023-11-21 10:47:19','http://127.0.0.1:8888/online/95cc3bee3356565852fa0fa08');
+INSERT INTO `one-blog`.blog_tag (tag_name,createdAt,updatedAt) VALUES
+	 ('java','2023-11-21 10:23:50','2023-11-21 10:23:50'),
+	 ('kotlin','2023-11-21 10:27:06','2023-11-21 10:27:06');
+INSERT INTO `one-blog`.blog_talk (user_id,content,status,is_top,like_times,createdAt,updatedAt) VALUES
+	 (162,'我不生气，毕竟我不是付款的一方。',1,1,0,'2023-11-21 10:43:02','2023-11-21 10:43:02');
+INSERT INTO `one-blog`.blog_talk_photo (talk_id,url,createdAt,updatedAt) VALUES
+	 (33,'http://127.0.0.1:8888/online/95cc3bee3356565852fa0fa03','2023-11-21 10:43:02','2023-11-21 10:43:02');
+INSERT INTO `one-blog`.blog_user (username,password,`role`,nick_name,avatar,createdAt,updatedAt,qq,ip) VALUES
+	 ('redbrick','$2a$10$p1rm/cKUIawyDP1D8HlqCOD1w//n9njRuhh/v8/z54BO9vvEWUpHK',1,'超级管理员','http://mrzym.top/online/9bb507f4bd065759a3d093d04.webp','2023-11-21 10:04:42','2023-11-21 10:23:19','','127.0.0.1'),
+	 ('gogotone','$2a$10$VUEXj4L/Rw7QEBQ7.LVTRumtsnq6O.nORMR.4CdrCZNnJxh48VGv6',2,'gogo tone','http://mrzym.top/online/9bb507f4bd065759a3d093d04.webp','2023-11-21 10:35:01','2023-11-21 10:35:01','','127.0.0.1');

@@ -75,7 +75,7 @@ gitee仓库地址：<https://gitee.com/mrzym/blogServer>
 
 ```git
 # pnpm 版本 v7.27.0
-# node 版本 v18.17.0
+# node 版本 , 自己使用的是 v16.15.0
 
 1、下载项目
 git clone https://gitee.com/mrzym/blog-v3.git
