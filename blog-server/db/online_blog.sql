@@ -18,7 +18,7 @@ CREATE TABLE `blog_article` (
   `thumbs_up_times` int DEFAULT '0' COMMENT '文章点赞次数',
   `reading_duration` double DEFAULT '0' COMMENT '文章阅读时长',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_article_tag definition
@@ -30,7 +30,7 @@ CREATE TABLE `blog_article_tag` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_category definition
@@ -56,7 +56,7 @@ CREATE TABLE `blog_category` (
   UNIQUE KEY `category_name_13` (`category_name`) USING BTREE,
   UNIQUE KEY `category_name_14` (`category_name`) USING BTREE,
   UNIQUE KEY `category_name_15` (`category_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_comment definition
@@ -78,7 +78,7 @@ CREATE TABLE `blog_comment` (
   `updatedAt` datetime DEFAULT NULL,
   `ip` varchar(255) DEFAULT NULL COMMENT 'ip地址',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=208 DEFAULT CHARSET=utf8mb4;
 
 
 -- `one-blog`.blog_config definition
@@ -103,7 +103,7 @@ CREATE TABLE `blog_config` (
   `we_chat_pay` varchar(255) DEFAULT NULL COMMENT '微信收款码',
   `ali_pay` varchar(255) DEFAULT NULL COMMENT '支付宝收款码',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_header definition
@@ -115,7 +115,7 @@ CREATE TABLE `blog_header` (
   `updatedAt` datetime DEFAULT NULL,
   `route_name` varchar(555) DEFAULT NULL COMMENT '路由名称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 
 -- DBeaver tool
 
@@ -129,7 +129,7 @@ CREATE TABLE `blog_like` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=148 DEFAULT CHARSET=utf8mb4;
 
 
 -- `one-blog`.blog_links definition
@@ -144,7 +144,7 @@ CREATE TABLE `blog_links` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 
 
 -- `one-blog`.blog_message definition
@@ -164,7 +164,7 @@ CREATE TABLE `blog_message` (
   `font_weight` int DEFAULT '500' COMMENT '字体宽度',
   `nick_name` varchar(255) DEFAULT NULL COMMENT '游客用户的昵称',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4;
 
 
 -- `one-blog`.blog_notify definition
@@ -179,7 +179,7 @@ CREATE TABLE `blog_notify` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb4;
 
 
 -- `one-blog`.blog_photo definition
@@ -192,7 +192,7 @@ CREATE TABLE `blog_photo` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_photo_album definition
@@ -205,7 +205,7 @@ CREATE TABLE `blog_photo_album` (
   `updatedAt` datetime DEFAULT NULL,
   `album_cover` varchar(555) DEFAULT NULL COMMENT '相册封面',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_recommend definition
@@ -217,7 +217,7 @@ CREATE TABLE `blog_recommend` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_tag definition
@@ -252,7 +252,7 @@ CREATE TABLE `blog_tag` (
   UNIQUE KEY `tag_name_22` (`tag_name`) USING BTREE,
   UNIQUE KEY `tag_name_23` (`tag_name`) USING BTREE,
   UNIQUE KEY `tag_name_24` (`tag_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_talk definition
@@ -267,7 +267,7 @@ CREATE TABLE `blog_talk` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_talk_photo definition
@@ -279,7 +279,7 @@ CREATE TABLE `blog_talk_photo` (
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 -- `one-blog`.blog_user definition
@@ -318,7 +318,7 @@ CREATE TABLE `blog_user` (
   UNIQUE KEY `username_20` (`username`) USING BTREE,
   UNIQUE KEY `username_21` (`username`) USING BTREE,
   UNIQUE KEY `username_22` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=164 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=164 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
 
